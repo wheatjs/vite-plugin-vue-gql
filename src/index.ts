@@ -4,6 +4,7 @@ import { parse } from '@vue/compiler-sfc'
 import { parse as _parse } from '@babel/parser'
 import { parseVueRequest } from './query'
 import { collectNodes, collectUseImports, mergeNodesWithQueries, replaceAtIndexs } from './util'
+// import { UserOptions } from './types'
 
 const ID = 'vite-gql'
 
@@ -18,11 +19,8 @@ function vqlPlugin(): Plugin {
         return ID
     },
     async load(id) {
-      if (id === ID) {
-        return `
-          export { useQuery, useMutation, useSubscription } from '@urql/vue'
-        `
-      }
+      if (id === ID)
+        return 'export { useQuery, useMutation, useSubscription } from \'@urql/vue\''
     },
     async transform(code: string, id: string) {
       const fileRegex = /\.(vue)$/
@@ -30,8 +28,7 @@ function vqlPlugin(): Plugin {
 
       if (query && query.vue && query.type === 'gql') {
         return {
-          code: `
-          export default {}`,
+          code: 'export default {}',
           map: null,
         }
       }
