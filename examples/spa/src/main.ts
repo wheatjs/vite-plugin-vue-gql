@@ -6,5 +6,5 @@ import './index.css'
 
 const app = createApp(App)
 
-app.use(urql, { url: 'https://spotify-graphql-server.herokuapp.com/graphql' })
+app.use(urql, { url: 'https://spotify-graphql-server.herokuapp.com/graphql', })
 app.mount('#app')

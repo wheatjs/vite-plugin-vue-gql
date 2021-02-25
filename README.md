@@ -150,4 +150,5 @@ When you create a `<gql>` tag, this plugin will pick that up and automatically i
 ## Roadmap
 - [x] Support `useMutation` and `useSubscription`
 - [x] Support multiple named gql tags(or allow them to be tagged as mutations or subscriptions)
-- [ ] Look into auto detecting used properties and auto-generating a GQL request 
+- [ ] Look into auto detecting used properties and auto-generating a GQL request
+- [ ] Add in support for fragments
