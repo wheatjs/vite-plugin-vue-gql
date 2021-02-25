@@ -3,7 +3,7 @@ import { babelParserDefaultPlugins } from '@vue/shared'
 import { parse } from '@vue/compiler-sfc'
 import { parse as _parse } from '@babel/parser'
 import { parseVueRequest } from './query'
-import { collectNodes, mergeNodesWithQueries, replaceAtIndexs } from './util'
+import { collectNodes, collectUseImports, mergeNodesWithQueries, replaceAtIndexs } from './util'
 
 const ID = 'vite-gql'
 
@@ -43,11 +43,11 @@ function vqlPlugin(): Plugin {
         if (descriptor.scriptSetup && descriptor.customBlocks.find(b => b.type === 'gql')) {
           const queries = descriptor.customBlocks
             .filter(b => b.type === 'gql')
-            .map(b => {
+            .map((b) => {
               const attrs = b.attrs
 
               if (!Object.keys(attrs).includes('mutation') && !Object.keys(attrs).includes('subscription'))
-                attrs['query'] = true
+                attrs.query = true
 
               return {
                 content: b.content,
@@ -57,8 +57,8 @@ function vqlPlugin(): Plugin {
 
           const { content } = descriptor.scriptSetup
           const nodes = _parse(content, { sourceType: 'module', plugins: [...babelParserDefaultPlugins, 'typescript', 'topLevelAwait'] }).program.body
-
-          const n = collectNodes(nodes, ['useQuery', 'useMutation', 'useSubscription'])
+          const i = collectUseImports(nodes, ['useQuery', 'useMutation', 'useSubscription'], ID)
+          const n = collectNodes(nodes, i)
           const x = mergeNodesWithQueries(n, queries)
           const replacementCode = replaceAtIndexs(x, content)
 

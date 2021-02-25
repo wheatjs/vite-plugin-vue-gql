@@ -9,6 +9,7 @@ interface QueryMetadata {
 
 interface NodeMetadata {
   callName: string
+  callType: string
   start: number
   end: number
   args: (Expression | SpreadElement | JSXNamespacedName | ArgumentPlaceholder)[]
@@ -18,7 +19,22 @@ interface NodeReplacement extends NodeMetadata {
   query?: any
 }
 
-export function collectNodes(statements: Statement[], calls: string[]): NodeMetadata[] {
+export function collectUseImports(statements: Statement[], callers: string[], packageName: string): Record<string, string> {
+  const imp: Record<string, string> = {}
+
+  statements.forEach((s) => {
+    if (s.type === 'ImportDeclaration' && s.source.value === packageName) {
+      s.specifiers.forEach((x) => {
+        if (x.type === 'ImportSpecifier' && x.imported.type === 'Identifier' && callers.includes(x.imported.name))
+          imp[x.imported.name] = x.local.name
+      })
+    }
+  })
+
+  return imp
+}
+
+export function collectNodes(statements: Statement[], calls: Record<string, string>): NodeMetadata[] {
   const nodes: NodeMetadata[] = []
 
   statements.forEach((x) => {
@@ -26,11 +42,12 @@ export function collectNodes(statements: Statement[], calls: string[]): NodeMeta
       x.declarations.forEach((y) => {
         const z = y.init
 
-        if (z && z.type === 'CallExpression' && isOneOfCall(z, calls)) {
+        if (z && z.type === 'CallExpression' && isOneOfCall(z, Object.values(calls))) {
           const { start, end, arguments: args } = z
 
           nodes.push({
             callName: callName(z),
+            callType: Object.entries(calls).find(([_, value]) => value === callName(z))![0],
             start: start!,
             end: end!,
             args,
@@ -38,11 +55,12 @@ export function collectNodes(statements: Statement[], calls: string[]): NodeMeta
         }
       })
     }
-    else if (x.type === 'ExpressionStatement' && x.expression.type === 'CallExpression' && isOneOfCall(x.expression, calls)) {
+    else if (x.type === 'ExpressionStatement' && x.expression.type === 'CallExpression' && isOneOfCall(x.expression, Object.values(calls))) {
       const { start, end, expression: { arguments: args } } = x
-      
+
       nodes.push({
         callName: callName(x.expression),
+        callType: Object.entries(calls).find(([_, value]) => value === callName(x.expression))![0],
         start: start!,
         end: end!,
         args,
@@ -56,19 +74,19 @@ export function collectNodes(statements: Statement[], calls: string[]): NodeMeta
 function validateCallWithQuery(call: string, query: Record<string, string | boolean>) {
   if (call === 'useQuery' && Object.keys(query).find(x => x === 'subscription' || x === 'mutation'))
     throw new Error(`You cannot use a ${Object.keys(query).find(x => x === 'subscription' || x === 'mutation')} type on a useQuery function call`)
-  
+
   if (call === 'useSubscription' && Object.keys(query).find(x => x === 'query' || x === 'mutation'))
     throw new Error(`You cannot use a ${Object.keys(query).find(x => x === 'query' || x === 'mutation')} type on a useSubscription function call`)
-    
+
   if (call === 'useMutation' && Object.keys(query).find(x => x === 'query' || x === 'subscription'))
     throw new Error(`You cannot use a ${Object.keys(query).find(x => x === 'subscription' || x === 'mutation')} type on a useMutation function call`)
 }
 
 export function mergeNodesWithQueries(nodes: NodeMetadata[], queries: QueryMetadata[]): (NodeReplacement | null)[] {
   const mapCallToType = {
-    'useQuery': 'query',
-    'useMutation': 'mutation',
-    'useSubscription': 'subscription'
+    useQuery: 'query',
+    useMutation: 'mutation',
+    useSubscription: 'subscription',
   }
 
   return nodes.map((node) => {
@@ -81,20 +99,20 @@ export function mergeNodesWithQueries(nodes: NodeMetadata[], queries: QueryMetad
         if (!query)
           throw new Error(`Unable to find query with name of "${name}"`)
 
-        validateCallWithQuery(node.callName, query.attrs)
+        validateCallWithQuery(node.callType, query.attrs)
 
         // Everything looks good, assign query to node
         return {
           ...node,
           query: query.content,
         }
-
-      } else if (node.args[0].type === 'ObjectExpression') {
+      }
+      else if (node.args[0].type === 'ObjectExpression') {
         // Since there is no name, infer the query from call type
         let query: any = null
         // @ts-ignore
-        const type = mapCallToType[node.callName]
-        
+        const type = mapCallToType[node.callType]
+
         queries.forEach((q) => {
           if (type in q.attrs && !('name' in q.attrs))
             query = q.content
@@ -105,16 +123,17 @@ export function mergeNodesWithQueries(nodes: NodeMetadata[], queries: QueryMetad
 
         return {
           ...node,
-          query: query,
+          query,
         }
       }
-    } else {
+    }
+    else {
       // Infer query
       // Since there is no name, infer the query from call type
       let query: any = null
       // @ts-ignore
-      const type = mapCallToType[node.callName]
-      
+      const type = mapCallToType[node.callType]
+
       queries.forEach((q) => {
         if (type in q.attrs && !('name' in q.attrs))
           query = q.content
@@ -125,7 +144,7 @@ export function mergeNodesWithQueries(nodes: NodeMetadata[], queries: QueryMetad
 
       return {
         ...node,
-        query: query,
+        query,
       }
     }
 
@@ -135,15 +154,15 @@ export function mergeNodesWithQueries(nodes: NodeMetadata[], queries: QueryMetad
 
 export function convertQueryToFunctionCall(node: NodeReplacement): string {
   const name = node.callName
-  let args: any[] = node.args
+  const args: any[] = node.args
   let arg = ''
 
-  if (node.callName === 'useQuery' || node.callName === 'useSubscription') {
+  if (node.callType === 'useQuery' || node.callType === 'useSubscription') {
     if (args.length > 0) {
       if (args[0].type === 'StringLiteral')
         args.shift()
     }
-    
+
     if (args.length === 0) {
       arg = `{ query: \`${node.query.trim()}\` }`
     }
@@ -154,12 +173,14 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
     else if (args.length === 2) {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
       const options = generate({ type: 'Program', body: [args[1]] }).code
-  
+
       arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }`
     }
-  } else if (node.callName === 'useMutation') {
+  }
+  else if (node.callType === 'useMutation') {
     arg = `\`${node.query.trim()}\``
-  } else if (node.callName === 'useSubscription') {
+  }
+  else if (node.callType === 'useSubscription') {
 
   }
 

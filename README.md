@@ -4,7 +4,7 @@
 
 This plugin allows you to use `gql` blocks in your Vue SFC with Vitejs
 
-## Install
+## 📦 Install
 
 Install the pacakge
 ```bash
@@ -147,8 +147,12 @@ For more examples visit the `/examples/spa` directory in the repo
 ## How it Works
 When you create a `<gql>` tag, this plugin will pick that up and automatically inject it into your `useFetch` statement, allowing you to keep your query and your code seperate.
 
-## Roadmap
+## 🚧 Roadmap
 - [x] Support `useMutation` and `useSubscription`
 - [x] Support multiple named gql tags(or allow them to be tagged as mutations or subscriptions)
 - [ ] Look into auto detecting used properties and auto-generating a GQL request
 - [ ] Add in support for fragments
+
+## 📄 License
+
+[MIT License](https://github.com/jacobclevenger/vite-plugin-vue-gql/blob/main/LICENSE) © 2021-PRESENT [Jacob Clevenger](https://github.com/jacobclevenger)
