@@ -3,8 +3,7 @@ declare module 'vite-gql' {
 
   declare type UseQueryOptions = Omit<UseQueryArgs, 'variables'>
 
-  export function useQuery<T, V>(queryName?: string, variables: UseQueryArgs.variables, options?: UseQueryOptions): UseQueryResponse<T, V>
-  export function useQuery<T, V>(variables?: UseQueryArgs.variables | null, options?: UseQueryOptions): UseQueryResponse<T, V>
-  export function useQuery<T, V>(variables?: UseQueryArgs.variables | null, options?: UseQueryOptions): UseQueryResponse<T, V>
-  export function useMutation<T, V>(query?: string): UseMutationResponse<T, V>
+  export function useQuery<T = any, V = any>(variables?: UseQueryArgs.variables | null, options?: UseQueryOptions): UseQueryResponse<T, V>
+  export function useQuery<T = any, V = any>(queryName?: string, variables: UseQueryArgs.variables, options?: UseQueryOptions): UseQueryResponse<T, V>
+  export function useMutation<T = any, V = any>(query?: string): UseMutationResponse<T, V>
 }
