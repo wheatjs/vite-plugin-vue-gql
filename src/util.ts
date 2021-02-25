@@ -18,7 +18,6 @@ interface NodeReplacement extends NodeMetadata {
   query?: any
 }
 
-
 export function collectNodes(statements: Statement[], calls: string[]): NodeMetadata[] {
   const nodes: NodeMetadata[] = []
 

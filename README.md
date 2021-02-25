@@ -1,9 +1,8 @@
 # vite-plugin-vue-gql
 
-### **⚠️ This Plugin is still in Development**
+### **⚠️ This Plugin is still in Development and currently only works with the `<script setup>` format**
 
 This plugin allows you to use `gql` blocks in your Vue SFC with Vitejs
-### **⚠️ This plugin currently only works with the \<script setup> format**
 
 ## Install
 
@@ -77,12 +76,78 @@ query($name: String!) {
 </gql>
 ```
 
+Multiple GQL Tags
+
+```html
+<!-- ExampleComponent.vue -->
+
+<script setup>
+import { useQuery } from 'vite-gql'
+
+const { fetching, error, data } = useQuery()
+const { fetching: userFetching, error: userError, data: userData } = useQuery('user', { name: 'Evan' })
+</script>
+
+<template>
+  ...
+</template>
+
+<gql>
+query($name: String!) {
+  info {
+    date
+    time
+  }
+}
+</gql>
+
+<gql name="user">
+query($name: String!) {
+  user(name: $name) {
+    username
+    avatar
+    bio {
+      description
+    }
+  }
+}
+</gql>
+```
+
+**Mutations**
+
+```html
+<!-- ExampleComponent.vue -->
+
+<script setup >
+import { useMutation } from 'vite-gql'
+
+const { executeMutation } = mutation()
+
+const createUser = (name) => {
+  executeMutation({ name })
+}
+</script>
+
+<template>
+  ...
+</template>
+
+<gql mutation>
+mutation($name: String!) {
+  createUser(name: $name) {
+    username
+    created
+  }
+}
+</gql>
+```
 For more examples visit the `/examples/spa` directory in the repo
 
 ## How it Works
 When you create a `<gql>` tag, this plugin will pick that up and automatically inject it into your `useFetch` statement, allowing you to keep your query and your code seperate.
 
 ## Roadmap
-- Support `useMutation` and `useSubscription`
-- Support multiple named gql tags(or allow them to be tagged as mutations or subscriptions)
-- Look into auto detecting used properties and auto-generating a GQL request 
+- [x] Support `useMutation` and `useSubscription`
+- [x] Support multiple named gql tags(or allow them to be tagged as mutations or subscriptions)
+- [ ] Look into auto detecting used properties and auto-generating a GQL request 

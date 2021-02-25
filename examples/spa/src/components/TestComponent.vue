@@ -6,7 +6,7 @@ import { useQuery } from 'vite-gql'
 const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)
 
-const { fetching, error, data } = useQuery<any, any>({ name: throttled.value })
+const { fetching, error, data } = useQuery<any, any>({ name: throttled })
 
 </script>
 

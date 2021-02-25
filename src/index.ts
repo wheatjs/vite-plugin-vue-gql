@@ -1,9 +1,6 @@
 import type { Plugin } from 'vite'
 import { babelParserDefaultPlugins } from '@vue/shared'
 import { parse } from '@vue/compiler-sfc'
-import { Node, CallExpression } from '@babel/types'
-// @ts-ignore
-import generate from '@babel/generator'
 import { parse as _parse } from '@babel/parser'
 import { parseVueRequest } from './query'
 import { collectNodes, mergeNodesWithQueries, replaceAtIndexs } from './util'
@@ -63,8 +60,6 @@ function vqlPlugin(): Plugin {
 
           const n = collectNodes(nodes, ['useQuery', 'useMutation', 'useSubscription'])
           const x = mergeNodesWithQueries(n, queries)
-          console.log(queries)
-          console.log(x)
           const replacementCode = replaceAtIndexs(x, content)
 
           code = code.replace(content, replacementCode)
