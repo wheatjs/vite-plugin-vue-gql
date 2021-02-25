@@ -1,6 +1,6 @@
 // @ts-ignore
 import type { MaybeRef } from 'vue'
-import { useQuery as _useQuery } from '@urql/vue'
+import { useQuery as _useQuery, useMutation as _useMutation, useSubscription as _useSubscription } from '@urql/vue'
 import type { UseQueryArgs, UseQueryResponse } from '@urql/vue'
 
 declare type UseQueryOptions = Omit<UseQueryArgs, 'variables'>

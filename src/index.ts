@@ -6,6 +6,7 @@ import { Node, CallExpression } from '@babel/types'
 import generate from '@babel/generator'
 import { parse as _parse } from '@babel/parser'
 import { parseVueRequest } from './query'
+import { collectNodes, mergeNodesWithQueries, replaceAtIndexs } from './util'
 
 const ID = 'vite-gql'
 
@@ -22,7 +23,7 @@ function vqlPlugin(): Plugin {
     async load(id) {
       if (id === ID) {
         return `
-          export { useQuery } from '@urql/vue'
+          export { useQuery, useMutation, useSubscription } from '@urql/vue'
         `
       }
     },
@@ -43,33 +44,30 @@ function vqlPlugin(): Plugin {
         const { descriptor } = parse(code)
 
         if (descriptor.scriptSetup && descriptor.customBlocks.find(b => b.type === 'gql')) {
-          const query = descriptor.customBlocks.find(b => b.type === 'gql')!.content
-          const { content } = descriptor.scriptSetup
+          const queries = descriptor.customBlocks
+            .filter(b => b.type === 'gql')
+            .map(b => {
+              const attrs = b.attrs
 
+              if (!Object.keys(attrs).includes('mutation') && !Object.keys(attrs).includes('subscription'))
+                attrs['query'] = true
+
+              return {
+                content: b.content,
+                attrs,
+              }
+            })
+
+          const { content } = descriptor.scriptSetup
           const nodes = _parse(content, { sourceType: 'module', plugins: [...babelParserDefaultPlugins, 'typescript', 'topLevelAwait'] }).program.body
 
-          nodes.forEach((node) => {
-            if (node.type === 'VariableDeclaration') {
-              node.declarations.forEach((n) => {
-                if (n.init) {
-                  const x = n.init
-                  if (x.type === 'CallExpression') {
-                    if (isUseQuery(x)) {
-                      const { start, end } = x
+          const n = collectNodes(nodes, ['useQuery', 'useMutation', 'useSubscription'])
+          const x = mergeNodesWithQueries(n, queries)
+          console.log(queries)
+          console.log(x)
+          const replacementCode = replaceAtIndexs(x, content)
 
-                      const replacementCode = replaceCode({ start: start!, end: end!, args: x.arguments }, content, query)
-                      code = code.replace(content, replacementCode)
-                    }
-                  }
-                }
-              })
-            }
-            else if (node.type === 'ExpressionStatement' && node.expression.type === 'CallExpression') {
-              const { start, end, expression: { arguments: args } } = node
-              const replacementCode = replaceCode({ start: start!, end: end!, args }, content, query)
-              code = code.replace(content, replacementCode)
-            }
-          })
+          code = code.replace(content, replacementCode)
         }
       }
 
@@ -79,39 +77,6 @@ function vqlPlugin(): Plugin {
       }
     },
   }
-}
-
-function replaceCode({ start, end, args }: { start: number; end: number; args: any }, code: string, query: string): string {
-  let arg = ''
-
-  if (args.length === 1) {
-    const variables = generate({ type: 'Program', body: [args[0]] }).code
-
-    arg = `{ query: \`${query}\`, variables: ${variables} }`
-  }
-  else if (args.length === 2) {
-    const variables = generate({ type: 'Program', body: [args[0]] }).code
-    const options = generate({ type: 'Program', body: [args[1]] }).code
-
-    arg = `{ query: \`${query}\`, variables: ${variables}, ...${options} }`
-  }
-
-  code = `${code.slice(0, start)} \n useQuery(${arg}) \n ${code.slice(end)}`
-
-  return code
-}
-
-function isUseQuery(node: Node) {
-  return isCallOf(node, 'useQuery')
-}
-
-function isCallOf(node: Node | null, name: string): node is CallExpression {
-  return !!(
-    node
-    && node.type === 'CallExpression'
-    && node.callee.type === 'Identifier'
-    && node.callee.name === name
-  )
 }
 
 export default vqlPlugin

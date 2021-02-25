@@ -5,7 +5,9 @@ import { useQuery } from 'vite-gql'
 
 const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)
-const { data, fetching, error } = useQuery<any, any>({ name: throttled })
+
+const { fetching, error, data } = useQuery<any, any>({ name: throttled.value })
+
 </script>
 
 <template>
@@ -13,7 +15,7 @@ const { data, fetching, error } = useQuery<any, any>({ name: throttled })
     <input v-model="name" class="rounded flex py-2 px-4 bg-transparent border-1 border-green-500 text-white" type="text">
     <div class="p-8 text-center" v-if="fetching">Loading...</div>
     <div v-else-if="error?.message">
-      {{ error.message }}
+      {{ error?.message }}
     </div>
     <div class="py-8" v-else>
       <div v-for="artist in data.queryArtists" :key="artist.name">
@@ -45,5 +47,11 @@ query($name: String!) {
       image
     }
   }
+}
+</gql>
+
+<gql name="hi">
+query {
+  hi
 }
 </gql>
