@@ -6,7 +6,7 @@ import { parseVueRequest } from './query'
 import { collectNodes, collectUseImports, mergeNodesWithQueries, replaceAtIndexs } from './util'
 // import { UserOptions } from './types'
 
-const ID = 'vite-gql'
+const ID = 'vql'
 
 function vqlPlugin(): Plugin {
   return {

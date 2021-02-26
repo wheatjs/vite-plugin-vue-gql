@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useThrottle } from '@vueuse/core'
-import { useQuery } from 'vite-gql'
+import { useQuery } from 'vql'
 
 const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)

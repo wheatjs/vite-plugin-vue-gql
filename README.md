@@ -1,158 +1,161 @@
-# vite-plugin-vue-gql
+<p align="center">
+  <img src='./assets/VQL-Logo.svg' alt="VQL" width="500">
+</p>
 
-### **⚠️ This Plugin is still in Development and currently only works with the `<script setup>` format**
+<p align="center">
+  Clean up your Vue SFC Scripts by moving your graphql quieres to their own block
+</p>
 
-This plugin allows you to use `gql` blocks in your Vue SFC with Vitejs
 
-## 📦 Install
+## Why?
+In the process of writing Vue applications that connect to GraphQL servers, I've started to notice that my graphql quieres are overcrowding my Vue SFC scripts. One solution would have been to move my queries to a seperate js file and just import them when I need to, but you then lose the ability to quickly see what your data looks like without having to go to a seperate file. The nice thing about Vue SFC is everything you need is in the same file, so I thought I would do the same thing for my graphql queries.
 
-Install the pacakge
+> ⚠️ This Plugin is still in Development and currently only works with the `<script setup>` format 
+
+## Install
 ```bash
-npm install -D vite-plugin-vue-gql
+# Install Plugin
+npm i -D vite-plugin-vue-gql
+
+# Install Peer Dependicies
+npm i @urql/vue graphql
 ```
 
-Install peer dependencies
-```
-npm install --save @urql/vue graphql
-```
+```ts
+// vite.config.ts
 
-Add to your `vite.config.js`
-
-```js
-import Vue from '@vitejs/plugin-vue';
-import Vql from 'vite-plugin-vue-gql';
+import Vue from '@vitejs/plugin-vue'
+import Vql from 'vite-plugin-vue-gql'
 
 export default {
-  plugins: [Vue(), Vql()],
-};
+  plugins: [
+    Vue(), 
+    Vql()
+  ],
+}
+```
+
+If you are using typescript, make sure you include the following in your `tsconfig.json`
+```json
+{
+  "compilerOptions": {
+    "types": [
+      "vite-plugin-vue-gql/client"
+    ]
+  }
+}
 ```
 
 ## Usage
+Instead of import your functions from `@urql/vue` you should now import them from the `vql` package.
+
 ```ts
-// main.js
-
-import { createApp } from 'vue'
-import urql from '@urql/vue'
-import App from './App.vue'
-
-const app = createApp(App)
-
-app.use(urql, { url: 'http://localhost:3000/graphql' })
-app.mount('#app')
+import { useQuery, useMutation, useSubscription } from 'vql'
 ```
 
+`<gql>` tags can have the following attributes, `query`(not required), `mutation`, `subscription`, and `name`. The first three attributes indicates what type of query it is while the `name` attribute allows you to have multiple queries in the same Vue SFC. 
 ```html
-<!-- ExampleComponent.vue -->
+<!-- Query-->
+<gql></gql>
 
-<script setup>
-import { useQuery } from 'vite-gql'
+<!-- Mutation -->
+<gql mutation></gql>
 
-const { fetching, error, data } = useQuery({ name: 'Evan' })
+<!-- Subscription -->
+<gql subscription></gql>
+
+<!-- Named GQL Block -->
+<gql name="users"></gql>
+```
+
+## Examples
+
+**Basic Usage**
+```html
+<script setup lang="ts">
+import { useQuery } from 'vql'
+
+const { data } = useQuery()
 </script>
 
 <template>
-  <div v-if="fetching">
-    Loading...
-  </div>
-  <div v-else-if="error.message">
-    Error {{ error.message }}
-  </div>
-  <div v-else>
-    <img :src="data.user.avatar">
-    <span>{{ data.user.username }}</span>
-  </div>
+  <h1>{{ data.hello }}</h1>
 </template>
+
+<gql>
+{
+  hello
+}
+</gql>
+```
+
+
+**Query with Variables**
+```html
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useQuery } from 'vql'
+
+const name = ref('Evan')
+const { data } = useQuery({ name })
+</script>
+
+<template>...</template>
 
 <gql>
 query($name: String!) {
   user(name: $name) {
     username
-    avatar
-    bio {
-      description
-    }
   }
 }
 </gql>
 ```
 
-Multiple GQL Tags
-
+**Named Query**
 ```html
-<!-- ExampleComponent.vue -->
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useQuery } from 'vql'
 
-<script setup>
-import { useQuery } from 'vite-gql'
-
-const { fetching, error, data } = useQuery()
-const { fetching: userFetching, error: userError, data: userData } = useQuery('user', { name: 'Evan' })
+const name = ref('Evan')
+const { data } = useQuery('users', { name })
 </script>
 
-<template>
-  ...
-</template>
+<template>...</template>
 
-<gql>
-query($name: String!) {
-  info {
-    date
-    time
-  }
-}
-</gql>
-
-<gql name="user">
+<gql name="users">
 query($name: String!) {
   user(name: $name) {
     username
-    avatar
-    bio {
-      description
-    }
   }
 }
 </gql>
 ```
 
 **Mutations**
-
 ```html
-<!-- ExampleComponent.vue -->
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useMutation } from 'vql'
 
-<script setup >
-import { useMutation } from 'vite-gql'
-
-const { executeMutation } = mutation()
-
-const createUser = (name) => {
-  executeMutation({ name })
-}
+const { executeMutation } = useMutation()
 </script>
 
-<template>
-  ...
-</template>
+<template>...</template>
 
 <gql mutation>
 mutation($name: String!) {
   createUser(name: $name) {
     username
-    created
   }
 }
 </gql>
 ```
-For more examples visit the `/examples/spa` directory in the repo
 
-## How it Works
-When you create a `<gql>` tag, this plugin will pick that up and automatically inject it into your `useFetch` statement, allowing you to keep your query and your code seperate.
+## Roadmap
+- [ ] Add support for fragments
+- [ ] Investigate automatically generating queries from SFC templates
 
-## 🚧 Roadmap
-- [x] Support `useMutation` and `useSubscription`
-- [x] Support multiple named gql tags(or allow them to be tagged as mutations or subscriptions)
-- [ ] Look into auto detecting used properties and auto-generating a GQL request
-- [ ] Add in support for fragments
-
-## 📄 License
+## License
 
 [MIT License](https://github.com/jacobclevenger/vite-plugin-vue-gql/blob/main/LICENSE) © 2021-PRESENT [Jacob Clevenger](https://github.com/jacobclevenger)

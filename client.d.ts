@@ -1,4 +1,4 @@
-declare module 'vite-gql' {
+declare module 'vql' {
   import type { UseQueryArgs, UseQueryResponse, UseMutationResponse } from '@urql/vue'
 
   declare type UseQueryOptions = Omit<UseQueryArgs, 'variables'>
