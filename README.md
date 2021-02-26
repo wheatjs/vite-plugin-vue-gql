@@ -8,7 +8,11 @@
 
 
 ## Why?
-In the process of writing Vue applications that connect to GraphQL servers, I've started to notice that my graphql quieres are overcrowding my Vue SFC scripts. One solution would have been to move my queries to a seperate js file and just import them when I need to, but you then lose the ability to quickly see what your data looks like without having to go to a seperate file. The nice thing about Vue SFC is everything you need is in the same file, so I thought I would do the same thing for my graphql queries.
+When writing Vue clients for GraphQL APIs, I've noticed scripts in Vue SFC files have become over-filled with GraphQL queries and had a need to organize the code better without taking away from what makes SFCs great: Having all the code for a single component organized and in one place.
+
+Moving queries to their own files would then create multiple files for a single component, cluttering the project more and reducing productivity in having to write components spanning multiple files.
+
+Enter Vue GQL! I wrote this Vite plugin to allow placing GraphQL queries related to a component directly within the component file without cluttering scripts, by placing them within their own specialized \<gql\> tags.
 
 > ⚠️ This Plugin is still in Development and currently only works with the `<script setup>` format 
 
