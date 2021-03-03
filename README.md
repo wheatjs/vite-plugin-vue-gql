@@ -6,6 +6,9 @@
   Clean up your Vue SFC Scripts by moving your graphql quieres to their own block
 </p>
 
+<p align="center">
+<a href="https://www.npmjs.com/package/vite-plugin-vue-gql" target="__blank"><img src="https://img.shields.io/npm/v/vite-plugin-vue-gql?color=a356fe&label=Version" alt="NPM version"></a>
+</p>
 
 ## Why?
 When writing Vue clients for GraphQL APIs, I've noticed scripts in Vue SFC files have become over-filled with GraphQL queries and had a need to organize the code better without taking away from what makes SFCs great: Having all the code for a single component organized and in one place.

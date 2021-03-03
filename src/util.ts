@@ -157,7 +157,7 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
   const args: any[] = node.args
   let arg = ''
 
-  if (node.callType === 'useQuery' || node.callType === 'useSubscription') {
+  if (node.callType === 'useQuery') {
     if (args.length > 0) {
       if (args[0].type === 'StringLiteral')
         args.shift()
@@ -181,7 +181,32 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
     arg = `\`${node.query.trim()}\``
   }
   else if (node.callType === 'useSubscription') {
+    if (args.length > 0) {
+      if (args[0].type === 'StringLiteral')
+        args.shift()
+    }
 
+    if (args.length === 0) {
+      arg = `{ query: \`${node.query.trim()}\` }`
+    }
+    else if (args.length === 1) {
+      const variables = generate({ type: 'Program', body: [args[0]] }).code
+      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables} }`
+    }
+    else if (args.length === 2) {
+      const variables = generate({ type: 'Program', body: [args[0]] }).code
+      const options = generate({ type: 'Program', body: [args[1]] }).code
+
+      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }`
+    }
+    else if (args.length === 3) {
+      const variables = generate({ type: 'Program', body: [args[0]] }).code
+      const options = generate({ type: 'Program', body: [args[1]] }).code
+      const x = generate({ type: 'Program', body: [args[2]] }).code
+      console.log(x)
+
+      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }, ${x}`
+    }
   }
 
   return `${name}(${arg})`.trim()
