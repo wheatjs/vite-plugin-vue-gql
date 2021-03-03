@@ -159,6 +159,34 @@ mutation($name: String!) {
 </gql>
 ```
 
+**Subscriptions**
+```html
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useSubscription } from 'vql'
+
+const isPaused = ref(false)
+const handleSubscription = (messages = [], response) => {
+  return [response.newMessages, ...messages]
+}
+
+const { data } = useSubscription({ from: 'Eren' }, { pause: isPaused }, handleSubscription)
+</script>
+
+<template>...</template>
+
+<gql mutation>
+subscription MessageSub($from: String!) {
+  newMessages(from: $from) {
+    id
+    from
+    text
+  }
+}
+</gql>
+```
+
+
 ## Roadmap
 - [ ] Add support for fragments
 - [ ] Investigate automatically generating queries from SFC templates
