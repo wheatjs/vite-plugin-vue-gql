@@ -203,7 +203,6 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
       const options = generate({ type: 'Program', body: [args[1]] }).code
       const x = generate({ type: 'Program', body: [args[2]] }).code
-      console.log(x)
 
       arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }, ${x}`
     }
