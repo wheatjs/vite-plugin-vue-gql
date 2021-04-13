@@ -7,7 +7,6 @@ const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)
 
 const { fetching, error, data } = useQuery<any, any>({ name: throttled })
-
 </script>
 
 <template>
@@ -52,4 +51,17 @@ query($name: String!) {
     }
   }
 }
+</gql>
+
+<gql name='test'>
+  query($name: String!) {
+    queryArtists(byName: $name) {
+      name
+      image
+      albums {
+        name
+        image
+      }
+    }
+  }
 </gql>

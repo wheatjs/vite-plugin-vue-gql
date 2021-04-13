@@ -10,6 +10,7 @@ interface QueryMetadata {
 interface NodeMetadata {
   callName: string
   callType: string
+  isAsync?: boolean
   start: number
   end: number
   args: (Expression | SpreadElement | JSXNamespacedName | ArgumentPlaceholder)[]
@@ -38,11 +39,17 @@ export function collectNodes(statements: Statement[], calls: Record<string, stri
   const nodes: NodeMetadata[] = []
 
   statements.forEach((x) => {
+    if (x.type === 'FunctionDeclaration' && x.body.type === 'BlockStatement')
+      nodes.push(...collectNodes(x.body.body, calls))
+
     if (x.type === 'VariableDeclaration') {
       x.declarations.forEach((y) => {
         const z = y.init
 
-        if (z && z.type === 'CallExpression' && isOneOfCall(z, Object.values(calls))) {
+        if (z && z.type === 'ArrowFunctionExpression' && z.body.type === 'BlockStatement') {
+          nodes.push(...collectNodes(z.body.body, calls))
+        }
+        else if (z && z.type === 'CallExpression' && isOneOfCall(z, Object.values(calls))) {
           const { start, end, arguments: args } = z
 
           nodes.push({
@@ -52,6 +59,21 @@ export function collectNodes(statements: Statement[], calls: Record<string, stri
             end: end!,
             args,
           })
+        }
+        else if (z && z.type === 'AwaitExpression' && isOneOfCall(z.argument, Object.values(calls))) {
+          if (z.argument.type === 'CallExpression') {
+            const { start, end, argument: { arguments: args } } = z
+            const cName = callName(z.argument)
+
+            nodes.push({
+              callName: cName,
+              isAsync: true,
+              callType: Object.entries(calls).find(([_, value]) => value === cName)![0],
+              start: start!,
+              end: end!,
+              args,
+            })
+          }
         }
       })
     }
@@ -65,6 +87,21 @@ export function collectNodes(statements: Statement[], calls: Record<string, stri
         end: end!,
         args,
       })
+    }
+    else if (x.type === 'ExpressionStatement' && x.expression.type === 'AwaitExpression' && isOneOfCall(x.expression.argument, Object.values(calls))) {
+      if (x.expression.argument.type === 'CallExpression') {
+        const { start, end, expression: { argument: { arguments: args } } } = x
+        const cName = callName(x.expression.argument)
+
+        nodes.push({
+          callName: cName,
+          isAsync: true,
+          callType: Object.entries(calls).find(([_, value]) => value === cName)![0],
+          start: start!,
+          end: end!,
+          args,
+        })
+      }
     }
   })
 
@@ -208,7 +245,7 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
     }
   }
 
-  return `${name}(${arg})`.trim()
+  return `${node.isAsync ? 'await ' : ''}${name}(${arg})`.trim()
 }
 
 /**

@@ -4,6 +4,15 @@ import TestComponent from './components/TestComponent.vue'
 
 <template>
   <div>
-    <TestComponent />
+    <Suspense>
+      <template #default>
+        <TestComponent />
+      </template>
+      <template #fallback>
+        <div>
+          Loading...
+        </div>
+      </template>
+    </Suspense>
   </div>
 </template>
