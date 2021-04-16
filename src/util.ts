@@ -1,8 +1,9 @@
 import { Statement, Node, CallExpression, Expression, SpreadElement, JSXNamespacedName, ArgumentPlaceholder } from '@babel/types'
 // @ts-ignore
 import generate from '@babel/generator'
+import { extractFragments, FragmentDefinition } from './fragments'
 
-interface QueryMetadata {
+export interface QueryMetadata {
   content: string
   attrs: Record<string, string | true>
 }
@@ -189,6 +190,11 @@ export function mergeNodesWithQueries(nodes: NodeMetadata[], queries: QueryMetad
   }).filter(x => x)
 }
 
+function queryWithFragment(query: string) {
+  const fragments = extractFragments(query).map(fragment => `\${Vql_Fragment_${fragment}}`).join('\n')
+  return `\` ${fragments} \n${query.trim()}\``
+}
+
 export function convertQueryToFunctionCall(node: NodeReplacement): string {
   const name = node.callName
   const args: any[] = node.args
@@ -201,21 +207,21 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
     }
 
     if (args.length === 0) {
-      arg = `{ query: \`${node.query.trim()}\` }`
+      arg = `{ query: ${queryWithFragment(node.query)} }`
     }
     else if (args.length === 1) {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
-      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables} }`
+      arg = `{ query: ${queryWithFragment(node.query)}, variables: ${variables} }`
     }
     else if (args.length === 2) {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
       const options = generate({ type: 'Program', body: [args[1]] }).code
 
-      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }`
+      arg = `{ query: ${queryWithFragment(node.query)}, variables: ${variables}, ...${options} }`
     }
   }
   else if (node.callType === 'useMutation') {
-    arg = `\`${node.query.trim()}\``
+    arg = `${queryWithFragment(node.query)}`
   }
   else if (node.callType === 'useSubscription') {
     if (args.length > 0) {
@@ -224,24 +230,24 @@ export function convertQueryToFunctionCall(node: NodeReplacement): string {
     }
 
     if (args.length === 0) {
-      arg = `{ query: \`${node.query.trim()}\` }`
+      arg = `{ query: ${queryWithFragment(node.query)} }`
     }
     else if (args.length === 1) {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
-      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables} }`
+      arg = `{ query: ${queryWithFragment(node.query)}, variables: ${variables} }`
     }
     else if (args.length === 2) {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
       const options = generate({ type: 'Program', body: [args[1]] }).code
 
-      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }`
+      arg = `{ query: ${queryWithFragment(node.query)}, variables: ${variables}, ...${options} }`
     }
     else if (args.length === 3) {
       const variables = generate({ type: 'Program', body: [args[0]] }).code
       const options = generate({ type: 'Program', body: [args[1]] }).code
       const x = generate({ type: 'Program', body: [args[2]] }).code
 
-      arg = `{ query: \`${node.query.trim()}\`, variables: ${variables}, ...${options} }, ${x}`
+      arg = `{ query: ${queryWithFragment(node.query)}, variables: ${variables}, ...${options} }, ${x}`
     }
   }
 

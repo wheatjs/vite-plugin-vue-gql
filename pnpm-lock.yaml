@@ -18,6 +18,7 @@ importers:
       '@urql/vue': 0.3.0_graphql@15.5.0+vue@3.0.6
       '@vue/shared': 3.0.6
       eslint: 7.20.0
+      fast-glob: 3.2.5
       graphql: 15.5.0
       rollup: 2.39.1
       tsup: 3.12.1_typescript@4.2.2
@@ -41,6 +42,7 @@ importers:
       debug: ^4.3.2
       deep-equal: ^2.0.5
       eslint: ^7.20.0
+      fast-glob: ^3.2.5
       graphql: ^15.5.0
       rollup: ^2.39.1
       tsup: ^3.12.1
@@ -58,7 +60,7 @@ importers:
       nodemon: 2.0.7
       typescript: 4.2.2
       vite: 2.0.3
-      vite-plugin-vue-gql: 'link:../..'
+      vite-plugin-vue-gql: link:../..
       vite-plugin-windicss: 0.5.0_vite@2.0.3
     specifiers:
       '@vitejs/plugin-vue': ^1.1.4
@@ -68,7 +70,7 @@ importers:
       nodemon: ^2.0.7
       typescript: ^4.1.5
       vite: ^2.0.2
-      vite-plugin-vue-gql: 'workspace:*'
+      vite-plugin-vue-gql: workspace:*
       vite-plugin-windicss: ^0.5.0
       vue: ^3.0.5
 lockfileVersion: 5.2
@@ -1794,10 +1796,10 @@ packages:
     dependencies:
       '@nodelib/fs.stat': 2.0.4
       '@nodelib/fs.walk': 1.2.6
-      glob-parent: 5.1.1
+      glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.2
-      picomatch: 2.2.2
+      micromatch: 4.0.4
+      picomatch: 2.2.3
     dev: true
     engines:
       node: '>=8'
@@ -1929,6 +1931,14 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-FnI+VGOpnlGHWZxthPGR+QhR78fuiK0sNLkHQv+bL9fQi57lNNdquIbna/WrfROrolq8GK5Ek6BiMwqL/voRYQ==
+  /glob-parent/5.1.2:
+    dependencies:
+      is-glob: 4.0.1
+    dev: true
+    engines:
+      node: '>= 6'
+    resolution:
+      integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==
   /glob/7.1.6:
     dependencies:
       fs.realpath: 1.0.0
@@ -2564,6 +2574,15 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-y7FpHSbMUMoyPbYUSzO6PaZ6FyRnQOpHuKwbo1G+Knck95XVU4QAiKdGEnj5wwoS7PlOgthX/09u5iFJ+aYf5Q==
+  /micromatch/4.0.4:
+    dependencies:
+      braces: 3.0.2
+      picomatch: 2.2.3
+    dev: true
+    engines:
+      node: '>=8.6'
+    resolution:
+      integrity: sha512-pRmzw/XUcwXGpD9aI9q/0XOwLNygjETJ8y0ao0wdqprrzDa4YnxLcz7fQRZr8voh8V10kGhABbNcHVk5wHgWwg==
   /mimic-response/1.0.1:
     dev: true
     engines:
@@ -2890,6 +2909,12 @@ packages:
       node: '>=8.6'
     resolution:
       integrity: sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
+  /picomatch/2.2.3:
+    dev: true
+    engines:
+      node: '>=8.6'
+    resolution:
+      integrity: sha512-KpELjfwcCDUb9PeigTs2mBJzXUPzAuP2oPcA989He8Rte0+YUAjw1JVedDhuTKPkHjSYzMN3npC9luThGYEKdg==
   /pify/2.3.0:
     dev: true
     engines:
@@ -3056,10 +3081,10 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-l1jNAspIBSFqbT+y+5FosojNpVpF94nlI+wDUpqP9enwOTfHx9f0gh5nB96vl+6yTpsJsypeNrwfzPrKuHB41A==
-  /queue-microtask/1.2.2:
+  /queue-microtask/1.2.3:
     dev: true
     resolution:
-      integrity: sha512-dB15eXv3p2jDlbOiNLyMabYg1/sXvppd8DP2J3EOCQ0AkuSXCW2tP7mnVouVLJKgUMY6yP0kcQDVpLCN13h4Xg==
+      integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
   /rc/1.2.8:
     dependencies:
       deep-extend: 0.6.0
@@ -3230,7 +3255,7 @@ packages:
       integrity: sha512-9rfr0Z6j+vE+eayfNVFr1KZ+k+jiUl2+0e4quZafy1x6SFCjzFspfRSO2ZZQeWeX9noeDTUDgg6eCENiEPFvQg==
   /run-parallel/1.2.0:
     dependencies:
-      queue-microtask: 1.2.2
+      queue-microtask: 1.2.3
     dev: true
     resolution:
       integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==

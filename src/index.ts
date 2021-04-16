@@ -4,23 +4,39 @@ import { parse } from '@vue/compiler-sfc'
 import { parse as _parse } from '@babel/parser'
 import { parseVueRequest } from './query'
 import { collectNodes, collectUseImports, mergeNodesWithQueries, replaceAtIndexs } from './util'
-// import { UserOptions } from './types'
+import { UserOptions } from './types'
+import { config } from './config'
+import { compileFragments, FragmentDefinition, extractFragments, generateFragmentImports } from './fragments'
+
+interface AppCache {
+  fragments: FragmentDefinition[]
+}
 
 const ID = 'vql'
+const ID_FRAGMENTS = 'virtual:gql-fragments'
+const Cache: AppCache = {
+  fragments: [],
+}
 
-function vqlPlugin(): Plugin {
+function vqlPlugin(options: UserOptions): Plugin {
   return {
     name: 'vite-plugin-vue-gql',
     enforce: 'pre',
-    configResolved(_config) {
+    async configResolved(_config) {
+      config.root = _config.root
+      Cache.fragments = await compileFragments(options)
     },
     resolveId(id) {
       if (id === ID)
         return ID
+      else if (id === ID_FRAGMENTS)
+        return ID_FRAGMENTS
     },
     async load(id) {
       if (id === ID)
         return 'export { useQuery, useMutation, useSubscription } from \'@urql/vue\''
+      else if (id === ID_FRAGMENTS)
+        return Cache.fragments.map(({ name, definition }) => `export const Vql_Fragment_${name} = \`${definition}\``).join('\n')
     },
     async transform(code: string, id: string) {
       const fileRegex = /\.(vue)$/
@@ -58,14 +74,26 @@ function vqlPlugin(): Plugin {
           const n = collectNodes(nodes, i)
           const x = mergeNodesWithQueries(n, queries)
           const replacementCode = replaceAtIndexs(x, content)
+          const replacementCodeWithImports = generateFragmentImports(queries, replacementCode)
 
-          code = code.replace(content, replacementCode)
+          code = code.replace(content, replacementCodeWithImports)
         }
       }
 
       return {
         code,
         map: null,
+      }
+    },
+    async handleHotUpdate({ file, server }) {
+      if (file.includes('.gql')) {
+        // Rebuild Cache
+        Cache.fragments = await compileFragments(options)
+        const module = server.moduleGraph.getModuleById(ID_FRAGMENTS)
+        if (module) {
+          server.moduleGraph.invalidateModule(module)
+          return [module!]
+        }
       }
     },
   }

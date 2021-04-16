@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useThrottle } from '@vueuse/core'
-import { useQuery } from 'vql'
+import { useQuery, useMutation } from 'vql'
 
 const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)
@@ -46,22 +46,8 @@ query($name: String!) {
     name
     image
     albums {
-      name
-      image
+      ...albumFields
     }
   }
 }
-</gql>
-
-<gql name='test'>
-  query($name: String!) {
-    queryArtists(byName: $name) {
-      name
-      image
-      albums {
-        name
-        image
-      }
-    }
-  }
 </gql>

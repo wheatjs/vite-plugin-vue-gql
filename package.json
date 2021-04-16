@@ -51,6 +51,7 @@
     "@urql/vue": "^0.3.0",
     "@vue/shared": "^3.0.5",
     "eslint": "^7.20.0",
+    "fast-glob": "^3.2.5",
     "graphql": "^15.5.0",
     "rollup": "^2.39.1",
     "tsup": "^3.12.1",
