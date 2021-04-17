@@ -186,9 +186,64 @@ subscription MessageSub($from: String!) {
 </gql>
 ```
 
+## Fragments
+You can use fargments in your graphql queries, mutations, and subscriptions by specifying your `.gql` files that contain your fragments in the config. 
+
+```ts
+// vite.config.ts
+
+import Vue from '@vitejs/plugin-vue'
+import Vql from 'vite-plugin-vue-gql'
+
+export default {
+  plugins: [
+    Vue(), 
+    Vql({
+      fragments: './src/fragments/**/*.gql'
+    })
+  ],
+}
+```
+
+Here is a general idea of what your fragments should look like
+```gql
+# src/fragments/albums.gql
+
+fragment albumFields on Album {
+  id
+  name
+  image
+}
+```
+
+Finally you can use these fragments in you Vue SFC
+
+```html
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useQuery } from 'vql'
+
+const name = ref('RADWIMPS')
+const { data } = useQuery({ name })
+</script>
+
+<template>...</template>
+
+<gql>
+query($name: String!) {
+  queryArtists(byName: $name) {
+    name
+    image
+    albums {
+      ...albumFields
+    }
+  }
+}
+</gql>
+```
 
 ## Roadmap
-- [ ] Add support for fragments
+- [x] Add support for fragments
 - [ ] Investigate automatically generating queries from SFC templates
 
 ## License
