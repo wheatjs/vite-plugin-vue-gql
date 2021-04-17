@@ -216,7 +216,7 @@ fragment albumFields on Album {
 }
 ```
 
-Finally you can use these fragments in you Vue SFC
+Finally you can use these fragments in your Vue SFC
 
 ```html
 <script setup lang="ts">
