@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useThrottle } from '@vueuse/core'
 import { useQuery, useMutation } from 'vql'
+import Album from './Album.vue'
 
 const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)
@@ -32,6 +33,7 @@ const { fetching, error, data } = useQuery<any, any>({ name: throttled })
             <div v-for="album in artist.albums" :key="album.name" class="bg-gray-800">
               <img :src="album.image">
               <span class="block text-xs py-4 px-4">{{ album.name }}</span>
+              <Album :data="album" />
             </div>
           </div>
         </div>

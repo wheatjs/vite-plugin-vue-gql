@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import TestComponent from './components/TestComponent.vue'
+import TestComponent2 from './components/TestComponent2.vue'
+import GenerationPreview from './components/GenerationPreview.vue'
 </script>
 
 <template>
   <div>
-    <Suspense>
+    <GenerationPreview></GenerationPreview>
+    <TestComponent2 />
+    <!-- <Suspense>
       <template #default>
         <TestComponent />
       </template>
@@ -13,6 +16,6 @@ import TestComponent from './components/TestComponent.vue'
           Loading...
         </div>
       </template>
-    </Suspense>
+    </Suspense> -->
   </div>
 </template>

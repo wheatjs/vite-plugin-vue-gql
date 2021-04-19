@@ -1,3 +1,7 @@
+declare module 'virtual:gql-generation' {
+  export const generated: string[]
+}
+
 declare module 'vql' {
   import type {
     UseQueryArgs,
@@ -5,6 +9,7 @@ declare module 'vql' {
     UseMutationResponse,
     UseSubscriptionResponse,
     UseSubscriptionArgs,
+    UseQueryResponse,
   } from '@urql/vue'
 
   declare type UseQueryOptions = Omit<UseQueryArgs, 'variables'>
@@ -33,4 +38,19 @@ declare module 'vql' {
     variables: UseSubscriptionArgs.variables<T, V>,
     _args?: Partial<UseSubscriptionArgs<T, V>>,
     handler?: MaybeRef<SubscriptionHandler<T, R>>): UseSubscriptionResponse<T, R, V>
+}
+
+declare module 'vql-gen' {
+
+  interface Variable {
+    [name: string]: any
+  }
+
+  interface Variables {
+    for: string
+    variables: Variable
+  }
+
+  export function useQuery<T = any, V = any>(variables?: Variables[], options?: Partial<UseQueryOptions<T, V>>): UseQueryResponse<T, V>
+
 }

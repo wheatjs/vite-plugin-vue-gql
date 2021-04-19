@@ -5,6 +5,7 @@ importers:
       chalk: 4.1.0
       debug: 4.3.2
       deep-equal: 2.0.5
+      lodash: 4.17.21
     devDependencies:
       '@antfu/eslint-config': 0.4.3_eslint@7.20.0+typescript@4.2.2
       '@babel/generator': 7.13.0
@@ -13,9 +14,12 @@ importers:
       '@types/debug': 4.1.5
       '@types/deep-equal': 1.0.1
       '@types/glob-to-regexp': 0.4.0
+      '@types/lodash': 4.14.168
       '@types/node': 14.14.31
       '@typescript-eslint/eslint-plugin': 4.15.2_eslint@7.20.0+typescript@4.2.2
       '@urql/vue': 0.3.0_graphql@15.5.0+vue@3.0.6
+      '@vue/compiler-core': 3.0.11
+      '@vue/compiler-dom': 3.0.11
       '@vue/shared': 3.0.6
       eslint: 7.20.0
       fast-glob: 3.2.5
@@ -33,9 +37,12 @@ importers:
       '@types/debug': ^4.1.5
       '@types/deep-equal': ^1.0.1
       '@types/glob-to-regexp': ^0.4.0
+      '@types/lodash': ^4.14.168
       '@types/node': ^14.14.31
       '@typescript-eslint/eslint-plugin': ^4.15.2
       '@urql/vue': ^0.3.0
+      '@vue/compiler-core': ^3.0.11
+      '@vue/compiler-dom': ^3.0.11
       '@vue/compiler-sfc': ^3.0.5
       '@vue/shared': ^3.0.5
       chalk: ^4.1.0
@@ -44,6 +51,7 @@ importers:
       eslint: ^7.20.0
       fast-glob: ^3.2.5
       graphql: ^15.5.0
+      lodash: ^4.17.21
       rollup: ^2.39.1
       tsup: ^3.12.1
       typescript: ^4.1.5
@@ -300,6 +308,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-kocDQvIbgMKlWxXe9fof3TQ+gkIPOUSEYhJjqUjvKMez3krV7vbzYCDq39Oj11UAVK7JqPVGQPlgE85dPNlQww==
+  /@babel/parser/7.13.15:
+    dev: true
+    engines:
+      node: '>=6.0.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-b9COtcAlVEQljy/9fbcMHpG+UIW9ReF+gpaxDHTlZd0c6/UU9ng8zdySAW9sRTzpvcdCHn6bUcbuYUgGzLAWVQ==
   /@babel/parser/7.13.4:
     engines:
       node: '>=6.0.0'
@@ -335,6 +350,14 @@ packages:
       to-fast-properties: 2.0.0
     resolution:
       integrity: sha512-hE+HE8rnG1Z6Wzo+MhaKE5lM5eMx71T4EHJgku2E3xIfaULhDcxiiRxUYgwX8qwP1BBSlag+TdGOt6JAidIZTA==
+  /@babel/types/7.13.14:
+    dependencies:
+      '@babel/helper-validator-identifier': 7.12.11
+      lodash: 4.17.21
+      to-fast-properties: 2.0.0
+    dev: true
+    resolution:
+      integrity: sha512-A2aa3QTkWoyqsZZFl56MLUsfmh7O0gN41IPvXAE/++8ojpbz12SszD7JEGYVdn4f9Kt4amIei07swF1h4AqmmQ==
   /@eslint/eslintrc/0.3.0:
     dependencies:
       ajv: 6.12.6
@@ -461,6 +484,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
+  /@types/lodash/4.14.168:
+    dev: true
+    resolution:
+      integrity: sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
   /@types/node/14.14.31:
     dev: true
     resolution:
@@ -640,6 +667,16 @@ packages:
       '@vue/compiler-sfc': ^3.0.4
     resolution:
       integrity: sha512-cUDILd++9jdhdjpuhgJofQqOabOKe+kTWTE2HQY2PBHEUO2fgwTurLE0cJg9UcIo1x4lHfsp+59S9TBCHgTZkw==
+  /@vue/compiler-core/3.0.11:
+    dependencies:
+      '@babel/parser': 7.13.15
+      '@babel/types': 7.13.14
+      '@vue/shared': 3.0.11
+      estree-walker: 2.0.2
+      source-map: 0.6.1
+    dev: true
+    resolution:
+      integrity: sha512-6sFj6TBac1y2cWCvYCA8YzHJEbsVkX7zdRs/3yK/n1ilvRqcn983XvpBbnN3v4mZ1UiQycTvOiajJmOgN9EVgw==
   /@vue/compiler-core/3.0.6:
     dependencies:
       '@babel/parser': 7.13.4
@@ -649,6 +686,13 @@ packages:
       source-map: 0.6.1
     resolution:
       integrity: sha512-O7QzQ39DskOoPpEDWRvKwDX7Py9UNT7SvLHvBdIfckGA3OsAEBdiAtuYQNcVmUDeBajm+08v5wyvHWBbWgkilQ==
+  /@vue/compiler-dom/3.0.11:
+    dependencies:
+      '@vue/compiler-core': 3.0.11
+      '@vue/shared': 3.0.11
+    dev: true
+    resolution:
+      integrity: sha512-+3xB50uGeY5Fv9eMKVJs2WSRULfgwaTJsy23OIltKgMrynnIj8hTYY2UL97HCoz78aDw1VDXdrBQ4qepWjnQcw==
   /@vue/compiler-dom/3.0.6:
     dependencies:
       '@vue/compiler-core': 3.0.6
@@ -702,6 +746,10 @@ packages:
       csstype: 2.6.16
     resolution:
       integrity: sha512-Y6y4Tak9//VXB2mp2NVQxbwC4a5xsnJpotpo8yBAB3qB3L4v4HQLpqxSkwThRwI6Y6Z7dydX/sgfraqLBE8BWg==
+  /@vue/shared/3.0.11:
+    dev: true
+    resolution:
+      integrity: sha512-b+zB8A2so8eCE0JsxjL24J7vdGl8rzPQ09hZNhystm+KqSbKcAej1A+Hbva1rCMmTTqA+hFnUSDc5kouEo0JzA==
   /@vue/shared/3.0.6:
     resolution:
       integrity: sha512-c37C60HpelUZIx+SNZVEINSxkFzQYhIXFg5AynnIA4QDBmY4iSPoACfGSwSUTCTKImukPeCgY2oqRJVP3R1Mnw==

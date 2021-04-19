@@ -1,3 +1,4 @@
+import { inspect } from 'util'
 import { Statement, Node, CallExpression, Expression, SpreadElement, JSXNamespacedName, ArgumentPlaceholder } from '@babel/types'
 // @ts-ignore
 import generate from '@babel/generator'
@@ -8,7 +9,8 @@ export interface QueryMetadata {
   attrs: Record<string, string | true>
 }
 
-interface NodeMetadata {
+export interface NodeMetadata {
+  variableName?: string
   callName: string
   callType: string
   isAsync?: boolean
@@ -46,14 +48,29 @@ export function collectNodes(statements: Statement[], calls: Record<string, stri
     if (x.type === 'VariableDeclaration') {
       x.declarations.forEach((y) => {
         const z = y.init
-
         if (z && z.type === 'ArrowFunctionExpression' && z.body.type === 'BlockStatement') {
           nodes.push(...collectNodes(z.body.body, calls))
         }
         else if (z && z.type === 'CallExpression' && isOneOfCall(z, Object.values(calls))) {
           const { start, end, arguments: args } = z
 
+          let name = ''
+
+          if (y.id.type === 'ObjectPattern') {
+            y.id.properties.forEach((w) => {
+              if (w.type === 'ObjectProperty') {
+                if (w.key.type === 'Identifier') {
+                  if (w.key.name === 'data') {
+                    if (w.value.type === 'Identifier')
+                      name = w.value.name
+                  }
+                }
+              }
+            })
+          }
+
           nodes.push({
+            variableName: name,
             callName: callName(z),
             callType: Object.entries(calls).find(([_, value]) => value === callName(z))![0],
             start: start!,
@@ -66,7 +83,23 @@ export function collectNodes(statements: Statement[], calls: Record<string, stri
             const { start, end, argument: { arguments: args } } = z
             const cName = callName(z.argument)
 
+            let name = ''
+
+            if (y.id.type === 'ObjectPattern') {
+              y.id.properties.forEach((w) => {
+                if (w.type === 'ObjectProperty') {
+                  if (w.key.type === 'Identifier') {
+                    if (w.key.name === 'data') {
+                      if (w.value.type === 'Identifier')
+                        name = w.value.name
+                    }
+                  }
+                }
+              })
+            }
+
             nodes.push({
+              variableName: name,
               callName: cName,
               isAsync: true,
               callType: Object.entries(calls).find(([_, value]) => value === cName)![0],

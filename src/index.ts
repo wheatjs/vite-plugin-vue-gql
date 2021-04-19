@@ -1,5 +1,7 @@
 import type { Plugin } from 'vite'
 import { babelParserDefaultPlugins } from '@vue/shared'
+import { baseParse } from '@vue/compiler-core'
+import * as CompilerDom from '@vue/compiler-dom'
 import { parse } from '@vue/compiler-sfc'
 import { parse as _parse } from '@babel/parser'
 import { parseVueRequest } from './query'
@@ -7,6 +9,7 @@ import { collectNodes, collectUseImports, mergeNodesWithQueries, replaceAtIndexs
 import { UserOptions } from './types'
 import { config } from './config'
 import { compileFragments, FragmentDefinition, extractFragments, generateFragmentImports } from './fragments'
+import { processDescriptor, genGQL } from './template'
 
 interface AppCache {
   fragments: FragmentDefinition[]
@@ -14,9 +17,12 @@ interface AppCache {
 
 const ID = 'vql'
 const ID_FRAGMENTS = 'virtual:gql-fragments'
+const ID_PREVIEW = 'virtual:gql-generation'
 const Cache: AppCache = {
   fragments: [],
 }
+
+let generated: string[] = []
 
 function vqlPlugin(options: UserOptions): Plugin {
   return {
@@ -31,12 +37,16 @@ function vqlPlugin(options: UserOptions): Plugin {
         return ID
       else if (id === ID_FRAGMENTS)
         return ID_FRAGMENTS
+      else if (id === ID_PREVIEW)
+        return ID_PREVIEW
     },
     async load(id) {
       if (id === ID)
         return 'export { useQuery, useMutation, useSubscription } from \'@urql/vue\''
       else if (id === ID_FRAGMENTS)
         return Cache.fragments.map(({ name, definition }) => `export const Vql_Fragment_${name} = \`${definition}\``).join('\n')
+      else if (id === ID_PREVIEW)
+        return `export const generated = [\`${generated}\`]`
     },
     async transform(code: string, id: string) {
       const fileRegex = /\.(vue)$/
@@ -68,10 +78,13 @@ function vqlPlugin(options: UserOptions): Plugin {
               }
             })
 
+          const expressions = processDescriptor(descriptor)
+
           const { content } = descriptor.scriptSetup
           const nodes = _parse(content, { sourceType: 'module', plugins: [...babelParserDefaultPlugins, 'typescript', 'topLevelAwait'] }).program.body
           const i = collectUseImports(nodes, ['useQuery', 'useMutation', 'useSubscription'], ID)
           const n = collectNodes(nodes, i)
+          generated = genGQL(expressions, n)
           const x = mergeNodesWithQueries(n, queries)
           const replacementCode = replaceAtIndexs(x, content)
           const replacementCodeWithImports = generateFragmentImports(queries, replacementCode)
@@ -86,6 +99,15 @@ function vqlPlugin(options: UserOptions): Plugin {
       }
     },
     async handleHotUpdate({ file, server }) {
+      if (file.includes('.vue')) {
+        // Rebuild Cache
+        Cache.fragments = await compileFragments(options)
+        const module = server.moduleGraph.getModuleById(ID_PREVIEW)
+        if (module) {
+          server.moduleGraph.invalidateModule(module)
+          return [module!]
+        }
+      }
       if (file.includes('.gql')) {
         // Rebuild Cache
         Cache.fragments = await compileFragments(options)
