@@ -6,9 +6,7 @@ import WindiCSS from 'vite-plugin-windicss'
 const config = defineConfig({
   plugins: [
     Vue(),
-    Vql({
-      fragments: './src/fragments/**/*.gql',
-    }),
+    Vql(),
     WindiCSS(),
   ],
 })

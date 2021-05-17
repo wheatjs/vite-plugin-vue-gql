@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useThrottle } from '@vueuse/core'
-import { useQuery, useMutation } from 'vql'
-import Album from './Album.vue'
+import { useQuery } from 'vql'
 
 const name = ref('RADWIMPS')
 const throttled = useThrottle(name, 2000)
 
-const { fetching, error, data } = useQuery<any, any>({ name: throttled })
+const { fetching, error, data } = useQuery<any, any>({
+  variables: {
+    name: throttled,
+  },
+})
 </script>
 
 <template>
-  <div class="max-w-screen-md px-4 py-8 mx-auto flex flex-col">
+  <!-- <div class="max-w-screen-md px-4 py-8 mx-auto flex flex-col">
     <input v-model="name" class="rounded flex py-2 px-4 bg-transparent border-1 border-green-500 text-white" type="text">
     <div v-if="fetching" class="p-8 text-center">
       Loading...
@@ -33,13 +36,12 @@ const { fetching, error, data } = useQuery<any, any>({ name: throttled })
             <div v-for="album in artist.albums" :key="album.name" class="bg-gray-800">
               <img :src="album.image">
               <span class="block text-xs py-4 px-4">{{ album.name }}</span>
-              <Album :data="album" />
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <gql>
@@ -48,7 +50,9 @@ query($name: String!) {
     name
     image
     albums {
-      ...albumFields
+      id
+      name
+      image
     }
   }
 }
