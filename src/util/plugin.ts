@@ -1,14 +1,16 @@
 import qs from 'querystring'
-import type { Plugin, TransformResult } from 'vite'
+import type { Plugin, TransformResult, ResolvedConfig } from 'vite'
 
 const isVue = /\.(vue)$/
 
 export type Transform = (source: string) => string | Promise<string>
 export type Load = string | null | Promise<string | null>
+export type Config = (conifg: ResolvedConfig) => void | Promise<void>
 
 export interface Module {
   id: string
   load: () => Load
+  config?: Config
   transform: Transform
 }
 
@@ -99,11 +101,13 @@ export function defineModules(modules: Module[]) {
   }
 
   const transforms = modules.map(({ transform }) => transform)
+  const configs = modules.map(({ config }) => config).filter(x => x) as Config[]
 
   return {
     resolve,
     load,
     transforms,
+    configs,
   }
 }
 
@@ -112,4 +116,9 @@ export async function applyTransforms(source: string, transforms: Transform[]) {
     source = await transform(source)
 
   return source
+}
+
+export async function applyConfigs(config: ResolvedConfig, configs: Config[]) {
+  for (const cfg of configs)
+    await cfg(config)
 }

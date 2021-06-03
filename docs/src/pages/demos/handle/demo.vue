@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useQuery } from 'vql'
-import { useDebounce } from '@vueuse/core'
+import { useQuery, useClientHandle } from 'vql'
+import { useThrottle } from '@vueuse/core'
 import type { Artist } from '~/types'
 
+const client = useClientHandle()
 const name = ref('Fear, and Loathing in Las Vegas')
-const throttledName = useDebounce(name, 100)
+const throttledName = useThrottle(name, 2000)
 
-const { fetching, error, data } = useQuery<{ queryArtists: Artist[] }>('simple', {
+const { fetching, error, data } = client.useQuery<{ queryArtists: Artist[] }>({
   variables: {
     name: throttledName,
   },
@@ -67,27 +68,3 @@ query($name: String!) {
   }
 }
 </gql>
-
-<gql name="simple">
-  query($name: String!) {
-    queryArtists(byName: $name) {
-      id
-      name
-      image
-      albums {
-        id
-        name
-        image
-        tracks {
-          id
-          name
-          preview_url
-          artists {
-            name
-            image
-          }
-        }
-      }
-    }
-  }
-  </gql>

@@ -1,6 +1,7 @@
 import { Expression, SpreadElement, JSXNamespacedName, ArgumentPlaceholder } from '@babel/types'
 // @ts-ignore
 import generate from '@babel/generator'
+import { extractFragments } from '../fragments/fragments'
 import { Query } from './parser'
 import { NodeMetadata } from './scriptAST'
 
@@ -24,6 +25,11 @@ export function stringifyArgument(arg: (Expression | SpreadElement | JSXNamespac
   return generate({ type: 'Program', body: [arg] }).code
 }
 
+function queryWithFragment(query: string) {
+  const fragments = extractFragments(query).map(fragment => `\${Vql_Fragment_${fragment}}`).join('\n')
+  return `\` ${fragments} \n${query.trim()}\``
+}
+
 export function convertNodeAndQueriesToFunctionCall(node: NodeMetadata, queries: Query[]): string {
   const query = queries.find(({ name, type }) => node.queryName === name && node.callType === type)
   let arg = ''
@@ -33,16 +39,16 @@ export function convertNodeAndQueriesToFunctionCall(node: NodeMetadata, queries:
 
   if (node.callType === 'useQuery') {
     arg = `{
-      query: \`${query.content.trim()}\`,
+      query: ${queryWithFragment(query.content)},
       ...${node.args.length > 0 ? stringifyArgument(node.args[0]) : '{}'}
     }`
   }
   else if (node.callType === 'useMutation') {
-    arg = `\`${query.content}\``
+    arg = `${queryWithFragment(query.content)}`
   }
   else if (node.callType === 'useSubscription') {
     arg = `{
-      query: ${query.content},
+      query: ${queryWithFragment(query.content)},
       ...${node.args.length > 0 ? stringifyArgument(node.args[0]) : '{}'}
     } ${node.args.length > 1 ? `, ${stringifyArgument(node.args[1])}` : ''}`
   }

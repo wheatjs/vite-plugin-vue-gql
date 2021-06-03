@@ -1,15 +1,15 @@
 import { GenerationModule } from '../properties'
 import { defineModule, getPossiblePrototypes } from '../util'
-import { parse } from '../shared/parser'
-import { useImportsFromScript, useNodesWithCallOf, usePropsWithPropertyOf } from '../shared/scriptAST'
-import { useTemplateProps } from '../shared/templateAST'
+import { parse } from '../ast/parser'
+import { useImportsFromScript, useNodesWithCallOf, usePropsWithPropertyOf } from '../ast/scriptAST'
+import { useTemplateProps } from '../ast/templateAST'
 import { convertPathsToObject, removePrototypesFromPaths } from './util'
 
 export const generationModule = defineModule({
   id: GenerationModule.id,
   async load() {
     return `
-      export { useQuery, useMutation, useSubscription } from '@urql/vue'
+      export { useQuery, useMutation, useSubscription, useClientHandle } from '@urql/vue'
     `
   },
   async transform(source) {

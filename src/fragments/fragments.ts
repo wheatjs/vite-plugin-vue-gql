@@ -1,9 +1,10 @@
 import { readFile } from 'fs/promises'
 import fg from 'fast-glob'
 import { parse, SelectionNode } from 'graphql'
-import { config } from './config'
-import { UserOptions } from './types'
-import { QueryMetadata } from './util'
+import { config } from '../shared'
+import { UserOptions, QueryMetadata } from '../shared/types'
+import { Query } from '../ast/parser'
+import { FragmentModule } from '../properties'
 
 export interface FragmentDefinition {
   name: string
@@ -65,7 +66,7 @@ export function extractFragments(gql: string) {
   }).flat()
 }
 
-export function generateFragmentImports(queries: QueryMetadata[], code: string) {
+export function generateFragmentImports(queries: Query[], code: string) {
   const _fragments = queries
     .map(({ content }) => extractFragments(content))
     .flat()
@@ -75,7 +76,7 @@ export function generateFragmentImports(queries: QueryMetadata[], code: string) 
     .map(x => `Vql_Fragment_${x}`)
     .join(', ')
 
-  const imp = `import { ${fragments} } from 'virtual:gql-fragments'`
+  const imp = `import { ${fragments} } from '${FragmentModule.id}'`
 
   return `
     ${imp}

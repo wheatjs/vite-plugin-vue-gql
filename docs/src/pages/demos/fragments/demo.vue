@@ -7,7 +7,7 @@ import type { Artist } from '~/types'
 const name = ref('Fear, and Loathing in Las Vegas')
 const throttledName = useDebounce(name, 100)
 
-const { fetching, error, data } = useQuery<{ queryArtists: Artist[] }>('simple', {
+const { fetching, error, data } = useQuery<{ queryArtists: Artist[] }>({
   variables: {
     name: throttledName,
   },
@@ -51,43 +51,8 @@ query($name: String!) {
     name
     image
     albums {
-      id
-      name
-      image
-      tracks {
-        id
-        name
-        preview_url
-        artists {
-          name
-          image
-        }
-      }
+      ...albumFields
     }
   }
 }
 </gql>
-
-<gql name="simple">
-  query($name: String!) {
-    queryArtists(byName: $name) {
-      id
-      name
-      image
-      albums {
-        id
-        name
-        image
-        tracks {
-          id
-          name
-          preview_url
-          artists {
-            name
-            image
-          }
-        }
-      }
-    }
-  }
-  </gql>

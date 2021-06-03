@@ -3,7 +3,7 @@ import { defineProps, defineEmit } from 'vue'
 import { useVModel } from '@vueuse/core'
 
 const emit = defineEmit(['update:modelValue'])
-const props = defineProps<{ placeholder: string; type: string; modelValue: string | number }>()
+const props = defineProps<{ placeholder?: string; modelValue: string | number }>()
 
 const value = useVModel(props, 'modelValue', emit)
 </script>
@@ -15,7 +15,7 @@ const value = useVModel(props, 'modelValue', emit)
     </div>
     <input
       v-model="value"
-      :type="type"
+      type="text"
       :placeholder="placeholder"
       class="h-full px-4 flex-1 text-current bg-transparent focus:outline-none"
     >

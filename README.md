@@ -104,7 +104,7 @@ import { ref } from 'vue'
 import { useQuery } from 'vql'
 
 const name = ref('Evan')
-const { data } = useQuery({ name })
+const { data } = useQuery({ variables: { name } })
 </script>
 
 <template>...</template>
@@ -125,7 +125,7 @@ import { ref } from 'vue'
 import { useQuery } from 'vql'
 
 const name = ref('Evan')
-const { data } = useQuery('users', { name })
+const { data } = useQuery('users', { variables: { name } })
 </script>
 
 <template>...</template>
@@ -224,7 +224,7 @@ import { ref } from 'vue'
 import { useQuery } from 'vql'
 
 const name = ref('RADWIMPS')
-const { data } = useQuery({ name })
+const { data } = useQuery({ variables: { name } })
 </script>
 
 <template>...</template>

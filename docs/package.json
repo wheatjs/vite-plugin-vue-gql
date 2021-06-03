@@ -7,7 +7,7 @@
     "preview-https": "serve dist"
   },
   "dependencies": {
-    "@urql/vue": "^0.3.0",
+    "@urql/vue": "0.4.0",
     "@vueuse/core": "^4.8.1",
     "@vueuse/head": "^0.5.1",
     "markdown-it": "^12.0.6",

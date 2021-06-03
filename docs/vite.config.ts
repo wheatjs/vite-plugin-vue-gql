@@ -28,7 +28,9 @@ export default defineConfig({
       include: [/\.vue$/, /\.md$/],
     }),
 
-    Vql(),
+    Vql({
+      fragments: './src/fragments/**/*.gql'
+    }),
 
     // https://github.com/hannoeru/vite-plugin-pages
     Pages({

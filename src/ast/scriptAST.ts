@@ -50,8 +50,8 @@ export function useNodesWithCallOf(calls: ScriptImports[], statements: Statement
     let queryName = 'default'
 
     if (args.length > 0) {
-      if (isString(args[0])) {
-        queryName = args[0].trim()
+      if (args[0].type === 'StringLiteral') {
+        queryName = args[0].value
         args.shift()
       }
     }
@@ -89,8 +89,20 @@ export function useNodesWithCallOf(calls: ScriptImports[], statements: Statement
       statement.declarations.forEach((declaration) => {
         const { init } = declaration
 
-        if (init && init.type === 'ArrowFunctionExpression' && init.body.type === 'BlockStatement') { nodes.push(...useNodesWithCallOf(calls, init.body.body)) }
-        else if (init && init.type === 'CallExpression' && isOneOfCall(init, calls.map(({ as }) => as))) { addCallExpression(init, declaration) }
+        // Support for client handles
+        if (init && init.type === 'CallExpression') {
+          const { callee } = init
+
+          if (callee.type === 'MemberExpression')
+            addCallExpression(init)
+        }
+
+        if (init && init.type === 'ArrowFunctionExpression' && init.body.type === 'BlockStatement') {
+          nodes.push(...useNodesWithCallOf(calls, init.body.body))
+        }
+        else if (init && init.type === 'CallExpression' && isOneOfCall(init, calls.map(({ as }) => as))) {
+          addCallExpression(init, declaration)
+        }
         else if (init && init.type === 'AwaitExpression' && isOneOfCall(init, calls.map(({ as }) => as))) {
           if (init.argument.type === 'CallExpression')
             addCallExpression(init.argument, declaration)
@@ -142,6 +154,8 @@ export function usePropsWithPropertyOf(nodes: NodeMetadata[], ast: File): string
 function callName(node: Node) {
   if (node && node.type === 'CallExpression' && node.callee.type === 'Identifier')
     return node.callee.name
+  else if (node && node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.type === 'Identifier')
+    return node.callee.property.name
 
   return ''
 }

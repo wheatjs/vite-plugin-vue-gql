@@ -12,10 +12,22 @@
           Define your graphql queries within their own block in your Vue SFC
         </template>
       </DemoLink>
-      <DemoLink to="/demos/generation" label="Generation">
+      <DemoLink to="/demos/fragments" label="Fragments">
+        <fa-code />
+        <template #description>
+          Fragments Demo
+        </template>
+      </DemoLink>
+      <!-- <DemoLink to="/demos/generation" label="Generation">
         <fa-magic />
         <template #description>
           Automatically generate graphql queries based on their usage within a Vue SFC
+        </template>
+      </DemoLink> -->
+      <DemoLink to="/demos/handle" label="Handles">
+        <mdi:hook />
+        <template #description>
+          Support for URQL Handles
         </template>
       </DemoLink>
     </div>

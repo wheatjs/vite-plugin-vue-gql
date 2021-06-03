@@ -20,7 +20,7 @@ importers:
       '@types/lodash': 4.14.168
       '@types/node': 14.14.41
       '@typescript-eslint/eslint-plugin': 4.22.0_eslint@7.24.0+typescript@4.2.4
-      '@urql/vue': 0.3.0_graphql@15.5.0+vue@3.0.11
+      '@urql/vue': 0.4.0_graphql@15.5.0+vue@3.0.11
       '@vue/compiler-core': 3.0.11
       '@vue/compiler-dom': 3.0.11
       '@vue/shared': 3.0.11
@@ -46,7 +46,7 @@ importers:
       '@types/lodash': ^4.14.168
       '@types/node': ^14.14.31
       '@typescript-eslint/eslint-plugin': ^4.15.2
-      '@urql/vue': ^0.3.0
+      '@urql/vue': 0.4.0
       '@vue/compiler-core': ^3.0.11
       '@vue/compiler-dom': ^3.0.11
       '@vue/compiler-sfc': ^3.0.5
@@ -65,7 +65,7 @@ importers:
       vue: ^3.0.5
   docs:
     dependencies:
-      '@urql/vue': 0.3.0_vue@3.0.11
+      '@urql/vue': 0.4.0_vue@3.0.11
       '@vueuse/core': 4.8.2_vue@3.0.11
       '@vueuse/head': 0.5.1_vue@3.0.11
       markdown-it: 12.0.6
@@ -107,7 +107,7 @@ importers:
       '@types/markdown-it': ^12.0.1
       '@types/nprogress': ^0.2.0
       '@typescript-eslint/eslint-plugin': ^4.21.0
-      '@urql/vue': ^0.3.0
+      '@urql/vue': 0.4.0
       '@vitejs/plugin-vue': ^1.2.1
       '@vue/compiler-sfc': ^3.0.11
       '@vue/server-renderer': ^3.0.11
@@ -1741,7 +1741,7 @@ packages:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
       integrity: sha512-nnMu4F+s4o0sll6cBSsTeVsT4cwxB7zECK3dFxzEjPBii9xLpq4yqqsy/FU5zMfan6G60DKZSCXAa3sHJZrcYw==
-  /@urql/core/2.0.0:
+  /@urql/core/2.1.2:
     dependencies:
       '@graphql-typed-document-node/core': 3.1.0
       wonka: 4.0.15
@@ -1749,8 +1749,8 @@ packages:
     peerDependencies:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     resolution:
-      integrity: sha512-Qj24CG8ullqZZsYmjrSH0JhH+nY7kj8GbVbA9si3KUjlYs75A/MBQU3i97j6oWyGldDBapyis2CfaQeXKbv8rA==
-  /@urql/core/2.0.0_graphql@15.5.0:
+      integrity: sha512-gZ+FBGe63P/dC10XRKAV7dlwRNbcfD8U622uvk54VXNrbY8tBkK9LHdWrjw1oByoQNON9t4NXikQlLOyp4HEBw==
+  /@urql/core/2.1.2_graphql@15.5.0:
     dependencies:
       '@graphql-typed-document-node/core': 3.1.0_graphql@15.5.0
       graphql: 15.5.0
@@ -1759,10 +1759,10 @@ packages:
     peerDependencies:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     resolution:
-      integrity: sha512-Qj24CG8ullqZZsYmjrSH0JhH+nY7kj8GbVbA9si3KUjlYs75A/MBQU3i97j6oWyGldDBapyis2CfaQeXKbv8rA==
-  /@urql/vue/0.3.0_graphql@15.5.0+vue@3.0.11:
+      integrity: sha512-gZ+FBGe63P/dC10XRKAV7dlwRNbcfD8U622uvk54VXNrbY8tBkK9LHdWrjw1oByoQNON9t4NXikQlLOyp4HEBw==
+  /@urql/vue/0.4.0_graphql@15.5.0+vue@3.0.11:
     dependencies:
-      '@urql/core': 2.0.0_graphql@15.5.0
+      '@urql/core': 2.1.2_graphql@15.5.0
       graphql: 15.5.0
       vue: 3.0.11
       wonka: 4.0.15
@@ -1771,10 +1771,10 @@ packages:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
       vue: ^3.0.0
     resolution:
-      integrity: sha512-0daAolY+aT3r87oi/zPfgagUld56zz7cFdeECbKkMiy/SzJoYvpPQzJ5LZJ2ZiHA0SMsaXtl6ha7Xc8h/syMqA==
-  /@urql/vue/0.3.0_vue@3.0.11:
+      integrity: sha512-FnXyCYtUEJD1hwBdl2PHOxti1WPOUF1cL4J7vmI9RJ7Wg2M6jGsVEoDPrGYTJ23fFmmW5DcBO/FZp/c+fZpJNQ==
+  /@urql/vue/0.4.0_vue@3.0.11:
     dependencies:
-      '@urql/core': 2.0.0
+      '@urql/core': 2.1.2
       vue: 3.0.11
       wonka: 4.0.15
     dev: false
@@ -1782,7 +1782,7 @@ packages:
       graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
       vue: ^3.0.0
     resolution:
-      integrity: sha512-0daAolY+aT3r87oi/zPfgagUld56zz7cFdeECbKkMiy/SzJoYvpPQzJ5LZJ2ZiHA0SMsaXtl6ha7Xc8h/syMqA==
+      integrity: sha512-FnXyCYtUEJD1hwBdl2PHOxti1WPOUF1cL4J7vmI9RJ7Wg2M6jGsVEoDPrGYTJ23fFmmW5DcBO/FZp/c+fZpJNQ==
   /@vitejs/plugin-vue/1.2.1_@vue+compiler-sfc@3.0.11:
     dependencies:
       '@vue/compiler-sfc': 3.0.11_vue@3.0.11
@@ -1875,7 +1875,7 @@ packages:
   /@vueuse/core/4.8.2_vue@3.0.11:
     dependencies:
       '@vueuse/shared': 4.8.2_vue@3.0.11
-      vue-demi: 0.7.5_vue@3.0.11
+      vue-demi: 0.9.1_vue@3.0.11
     dev: false
     peerDependencies:
       vue: '*'
@@ -1891,7 +1891,7 @@ packages:
       integrity: sha512-xt6qgtItb4z/7vp664opQc0c2+ZoU9itMfvpmg4+h0uJcEnhl7LYxO4V+G8H7EVki7SyXDIFMfoCiCFaJrArmg==
   /@vueuse/shared/4.8.2_vue@3.0.11:
     dependencies:
-      vue-demi: 0.7.5_vue@3.0.11
+      vue-demi: 0.9.1_vue@3.0.11
     dev: false
     peerDependencies:
       vue: '*'
@@ -6709,7 +6709,7 @@ packages:
       fsevents: 2.3.2
     resolution:
       integrity: sha512-KIqK90EoJJpuqE86Y9DSkZjFNGgsyZX/4I1xENIitLRd3hgRtOlIGCJYrNnBD9/eqipz0OroAiIj9/R1JcOdFA==
-  /vue-demi/0.7.5_vue@3.0.11:
+  /vue-demi/0.9.1_vue@3.0.11:
     dependencies:
       vue: 3.0.11
     dev: false
@@ -6722,7 +6722,7 @@ packages:
         optional: true
     requiresBuild: true
     resolution:
-      integrity: sha512-eFSQSvbQdY7C9ujOzvM6tn7XxwLjn0VQDXQsiYBLBwf28Na+2nTQR4BBBcomhmdP6mmHlBKAwarq6a0BPG87hQ==
+      integrity: sha512-7s1lufRD2l369eFWPjgLvhqCRk0XzGWJsQc7K4q+0mZtixyGIvsK1Cg88P4NcaRIEiBuuN4q1NN4SZKFKwQswA==
   /vue-eslint-parser/7.6.0_eslint@7.24.0:
     dependencies:
       debug: 4.3.2
