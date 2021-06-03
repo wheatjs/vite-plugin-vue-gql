@@ -107,8 +107,8 @@ export function useNodesWithCallOf(calls: ScriptImports[], statements: Statement
         else if (init && init.type === 'CallExpression' && isOneOfCall(init, calls.map(({ as }) => as))) {
           addCallExpression(init, declaration)
         }
-        else if (init && init.type === 'AwaitExpression' && isOneOfCall(init, calls.map(({ as }) => as))) {
-          if (init.argument.type === 'CallExpression')
+        else if (init && init.type === 'AwaitExpression') {
+          if (init.argument.type === 'CallExpression' && isOneOfCall(init.argument, calls.map(({ as }) => as)))
             addCallExpression(init.argument, declaration)
         }
       })
