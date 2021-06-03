@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useQuery, useClientHandle } from 'vql'
+import { useClientHandle } from 'vql'
 import { useThrottle } from '@vueuse/core'
 import type { Artist } from '~/types'
 

@@ -1,29 +1,30 @@
-import type { Ref } from 'vue'
-import type {
-  UseQueryArgs,
-  UseQueryResponse,
-  UseMutationResponse,
-  UseSubscriptionResponse,
-  UseSubscriptionArgs,
-  ClientHandle,
-} from '@urql/vue'
-
 declare type MaybeRef<T> = T | Ref<T>
 
 declare module 'virtual:gql-generation' {
   export const generated: string[]
 }
 
-interface VqlClientHandle {
-  useQuery<T = any, V = object>(_args: Omit<UseQueryArgs<T, V>, 'query'>): UseQueryResponse<T, V>
-  useQuery<T = any, V = object>(name: string, _args: Omit<UseQueryArgs<T, V>, 'query'>): UseQueryResponse<T, V>
-  useMutation<T = any, V = any>(): UseMutationResponse<T, V>
-  useMutation<T = any, V = any>(name: string): UseMutationResponse<T, V>
-  useSubscription<T = any, R = T, V = object>(_args: Omit<UseSubscriptionArgs<T, V>, 'query'>, handler?: MaybeRef<SubscriptionHandler<T, R>>): UseSubscriptionResponse<T, R, V>
-  useSubscription<T = any, R = T, V = object>(name: string, _args: Omit<UseSubscriptionArgs<T, V>, 'query'>, handler?: MaybeRef<SubscriptionHandler<T, R>>): UseSubscriptionResponse<T, R, V>
-}
-
 declare module 'vql' {
+  import type { Ref } from 'vue'
+  import type {
+    UseQueryArgs,
+    UseQueryResponse,
+    UseMutationResponse,
+    UseSubscriptionResponse,
+    UseSubscriptionArgs,
+    SubscriptionHandler,
+    ClientHandle,
+  } from '@urql/vue'
+
+  interface VqlClientHandle {
+    useQuery<T = any, V = object>(_args: Omit<UseQueryArgs<T, V>, 'query'>): UseQueryResponse<T, V>
+    useQuery<T = any, V = object>(name: string, _args: Omit<UseQueryArgs<T, V>, 'query'>): UseQueryResponse<T, V>
+    useMutation<T = any, V = any>(): UseMutationResponse<T, V>
+    useMutation<T = any, V = any>(name: string): UseMutationResponse<T, V>
+    useSubscription<T = any, R = T, V = object>(_args: Omit<UseSubscriptionArgs<T, V>, 'query'>, handler?: MaybeRef<SubscriptionHandler<T, R>>): UseSubscriptionResponse<T, R, V>
+    useSubscription<T = any, R = T, V = object>(name: string, _args: Omit<UseSubscriptionArgs<T, V>, 'query'>, handler?: MaybeRef<SubscriptionHandler<T, R>>): UseSubscriptionResponse<T, R, V>
+  }
+
   export function useClientHandle(): VqlClientHandle
 
   export function useQuery<T = any, V = object>(_args: Omit<UseQueryArgs<T, V>, 'query'>): UseQueryResponse<T, V>

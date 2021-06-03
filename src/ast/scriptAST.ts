@@ -44,10 +44,14 @@ export function useNodesWithCallOf(calls: ScriptImports[], statements: Statement
   const nodes: NodeMetadata[] = []
 
   const addCallExpression = (node: CallExpression, declaration?: VariableDeclarator) => {
-    const { start, end, arguments: args } = node
+    // eslint-disable-next-line
+    let { start, end, arguments: args } = node
 
     let name = ''
     let queryName = 'default'
+
+    if (node.callee.type === 'MemberExpression' && node.callee.property.type === 'Identifier')
+      start = node.callee.property.start
 
     if (args.length > 0) {
       if (args[0].type === 'StringLiteral') {

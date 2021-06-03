@@ -16,7 +16,8 @@
     "types": [
       "./src/index.d.ts",
       "vite/client",
-      "vite-plugin-vue-layouts/client"
+      "vite-plugin-vue-layouts/client.d.ts",
+      "vite-plugin-vue-gql/client"
     ],
     "paths": {
       "~/*": ["src/*"]
