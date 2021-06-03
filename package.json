@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-vue-gql",
   "description": "Vue SFC GraphQL Block",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -22,9 +22,6 @@
     "build": "tsup src/index.ts --dts --format cjs,esm",
     "prepublishOnly": "npm run build",
     "release": "npx git-ensure -a && npx bumpp --commit --tag --push",
-    "example:dev": "npm -C examples/spa run dev",
-    "example:build": "npm -C examples/spa run build",
-    "example:serve": "npm -C examples/spa run serve",
     "preview": "tsup src/index.ts --dts --format cjs,esm && npm -C docs run dev"
   },
   "dependencies": {
