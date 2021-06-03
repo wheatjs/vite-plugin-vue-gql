@@ -1,0 +1,10 @@
+fragment albumFields on Album {
+  id
+  name
+  image
+  tracks {
+    id
+    name
+    preview_url
+  }
+}

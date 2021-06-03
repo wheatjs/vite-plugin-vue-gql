@@ -1,8 +1,6 @@
-<p align="center">
-  <img src='./assets/VQL-Logo.svg' alt="VQL" width="500">
-</p>
+<Logo class="max-w-72 mb-12 mx-auto" />
 
-<p align="center">
+<p class="text-center block mb-4">
   Clean up your Vue SFC Scripts by moving your graphql quieres to their own block
 </p>
 
@@ -86,7 +84,7 @@ const { data } = useQuery()
 </script>
 
 <template>
-  <h1>{{ data.hello }}</h1>
+  <h1>{{ data }}</h1>
 </template>
 
 <gql>
@@ -104,7 +102,7 @@ import { ref } from 'vue'
 import { useQuery } from 'vql'
 
 const name = ref('Evan')
-const { data } = useQuery({ variables: { name } })
+const { data } = useQuery({ name })
 </script>
 
 <template>...</template>
@@ -125,7 +123,7 @@ import { ref } from 'vue'
 import { useQuery } from 'vql'
 
 const name = ref('Evan')
-const { data } = useQuery('users', { variables: { name } })
+const { data } = useQuery('users', { name })
 </script>
 
 <template>...</template>
@@ -206,7 +204,7 @@ export default {
 ```
 
 Here is a general idea of what your fragments should look like
-```gql
+```
 # src/fragments/albums.gql
 
 fragment albumFields on Album {
@@ -224,7 +222,7 @@ import { ref } from 'vue'
 import { useQuery } from 'vql'
 
 const name = ref('RADWIMPS')
-const { data } = useQuery({ variables: { name } })
+const { data } = useQuery({ name })
 </script>
 
 <template>...</template>

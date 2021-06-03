@@ -1,0 +1,57 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useQuery } from 'vql-gen'
+import { useThrottle } from '@vueuse/core'
+import type { Artist } from '~/types'
+
+useQuery({
+  
+})
+
+const name = ref('Fear, and Loathing in Las Vegas')
+const throttledName = useThrottle(name, 2000)
+
+const { fetching, error, data } = useQuery<{ queryArtists: Artist[] }>({
+  variables: {
+    name: throttledName,
+  },
+})
+
+const results = computed(() => {
+  if (data.queryArtists) {
+    data.queryArtists.length
+  }
+})
+
+</script>
+
+<template>
+  <div class="pt-4">
+    <Textfield v-model="name">
+      <carbon-search />
+    </Textfield>
+    <DataLoader :fetching="fetching" :error="error">
+      <template v-if="data">
+        <div v-for="artist in data.queryArtists" :key="artist.id" class="mt-8">
+          {{ someStuff }}
+          <div class="flex items-center flex-col text-center lg:text-left lg:flex-row space-x-4">
+            <img :src="artist.image" class="rounded-xl bg-black w-48 h-48 content-cover shadow-lg" />
+            <div class="flex-col items-center">
+              <h2 class="lg:text-5xl mt-4 lg:mt-0 text-3xl">
+                {{ artist.name.toString() }}
+              </h2>
+              <span class="text-lg text-gray-400 font-bold mt-2 block">
+                {{ artist.albums.length }} Albums
+              </span>
+            </div>
+          </div>
+          <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            <div v-for="album in artist.albums" :key="album.id">
+              <img :src="album.image" class="rounded-lg shadow-md" />
+            </div>
+          </div>
+        </div>
+      </template>
+    </DataLoader>
+  </div>
+</template>

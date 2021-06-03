@@ -1,5 +1,0 @@
-fragment albumFields on Album {
-  id
-  name
-  image
-}
