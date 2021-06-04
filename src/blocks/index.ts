@@ -40,7 +40,6 @@ export const blockModule = defineModule({
       }
 
       const filteredImports = imports.filter(({ imported }) => imported !== 'useClientHandle')
-
       const nodes = useNodesWithCallOf(filteredImports, scriptAST.program.body)
       const compiled = compile(scriptSetup!.content, nodes, queries)
       const final = generateFragmentImports(queries, compiled)

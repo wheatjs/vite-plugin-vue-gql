@@ -18,7 +18,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="activeTab === name">
+  <div v-show="activeTab === name">
     <slot />
   </div>
 </template>

@@ -7,6 +7,8 @@ import type { Artist } from '~/types'
 const name = ref('Fear, and Loathing in Las Vegas')
 const throttledName = useDebounce(name, 100)
 
+const test = document.getElementById('test')
+
 const { fetching, error, data } = useQuery<{ queryArtists: Artist[] }>('simple', {
   variables: {
     name: throttledName,

@@ -74,6 +74,9 @@ export function useNodesWithCallOf(calls: ScriptImports[], statements: Statement
       }
     }
 
+    if (!calls.find(({ as }) => as === callName(node)))
+      return
+
     nodes.push({
       queryName,
       variableName: name,

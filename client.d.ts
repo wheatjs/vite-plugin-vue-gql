@@ -1,5 +1,3 @@
-declare type MaybeRef<T> = T | Ref<T>
-
 declare module 'virtual:gql-generation' {
   export const generated: string[]
 }
@@ -15,6 +13,8 @@ declare module 'vql' {
     SubscriptionHandler,
     ClientHandle,
   } from '@urql/vue'
+
+  type MaybeRef<T> = T | Ref<T>
 
   interface VqlClientHandle {
     useQuery<T = any, V = object>(_args: Omit<UseQueryArgs<T, V>, 'query'>): UseQueryResponse<T, V>
