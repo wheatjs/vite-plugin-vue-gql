@@ -2,6 +2,7 @@ import { Expression, SpreadElement, JSXNamespacedName, ArgumentPlaceholder } fro
 // @ts-ignore
 import generate from '@babel/generator'
 import { extractFragments } from '../fragments/fragments'
+import { cache } from '../shared'
 import { Query } from './parser'
 import { NodeMetadata } from './scriptAST'
 
@@ -26,8 +27,19 @@ export function stringifyArgument(arg: (Expression | SpreadElement | JSXNamespac
 }
 
 function queryWithFragment(query: string) {
-  const fragments = extractFragments(query).map(fragment => `\${Vql_Fragment_${fragment}}`).join('\n')
-  return `\` ${fragments} \n${query.trim()}\``
+  const fragments = extractFragments(query)
+  const _fragments = fragments
+    .filter((fragment, i) => fragments.indexOf(fragment) === i)
+    .map((fragment) => {
+      const x = cache.fragments.find(({ name }) => name === fragment)
+      if (x)
+        return [...x.dependencies.map(z => `\${Vql_Fragment_${z}}`), `\${Vql_Fragment_${fragment}}`].join('\n')
+
+      return `\${Vql_Fragment_${fragment}}`
+    })
+    .join('\n')
+
+  return `\` ${_fragments} \n${query.trim()}\``
 }
 
 export function convertNodeAndQueriesToFunctionCall(node: NodeMetadata, queries: Query[]): string {

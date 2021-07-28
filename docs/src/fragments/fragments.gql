@@ -1,10 +1,14 @@
+fragment tracksFragment on Track {
+  id
+  name
+  preview_url
+}
+
 fragment albumFields on Album {
   id
   name
   image
   tracks {
-    id
-    name
-    preview_url
+    ...tracksFragment
   }
 }

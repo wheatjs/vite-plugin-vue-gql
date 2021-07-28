@@ -1,18 +1,36 @@
 import { readFile } from 'fs/promises'
 import fg from 'fast-glob'
 import { parse, SelectionNode } from 'graphql'
-import { config } from '../shared'
-import { UserOptions, QueryMetadata } from '../shared/types'
+import { config, cache } from '../shared'
+import { UserOptions } from '../shared/types'
 import { Query } from '../ast/parser'
 import { FragmentModule } from '../properties'
 
 export interface FragmentDefinition {
   name: string
   definition: string
+  dependencies: string[]
 }
 
 export interface FragmentMap {
   [name: string]: FragmentDefinition
+}
+
+export function resolveFragmentDependencies(fragment: FragmentDefinition, fragments: FragmentDefinition[]) {
+  const definitions: string[] = []
+
+  for (const f of extractFragments(fragment.definition)) {
+    const x = fragments.find(({ name }) => name === f)
+
+    if (x) {
+      const y = resolveFragmentDependencies(x, fragments)
+      definitions.push(...y)
+    }
+
+    definitions.push(f)
+  }
+
+  return definitions.flat().filter((x, i) => definitions.indexOf(x) === i)
 }
 
 export async function compileFragments(options: UserOptions): Promise<FragmentDefinition[]> {
@@ -33,9 +51,14 @@ export async function compileFragments(options: UserOptions): Promise<FragmentDe
 
         return null
       })
-      .filter(node => node)
+      .filter(node => node) as FragmentDefinition[]
 
-    return definitions as FragmentDefinition[]
+    const d = definitions.map((x) => {
+      x.dependencies = resolveFragmentDependencies(x, definitions)
+      return x
+    })
+
+    return d
   }
 
   return []
@@ -60,10 +83,12 @@ export function extractFragments(gql: string) {
   const schema = parse(gql)
 
   return schema.definitions.map((x) => {
-    if (x.kind === 'OperationDefinition')
+    if (x.kind === 'OperationDefinition' || x.kind === 'FragmentDefinition')
       return getFragments(x.selectionSet.selections)
     return null
-  }).flat()
+  })
+    .flat()
+    .filter(x => x) as string[]
 }
 
 export function generateFragmentImports(queries: Query[], code: string) {
@@ -73,7 +98,15 @@ export function generateFragmentImports(queries: Query[], code: string) {
 
   const fragments = _fragments
     .filter((x, i) => _fragments.indexOf(x) === i)
-    .map(x => `Vql_Fragment_${x}`)
+    .map((x) => {
+      const frag = cache.fragments.find(({ name }) => name === x)
+
+      if (frag)
+        return [`Vql_Fragment_${frag.name}`, ...frag.dependencies.map(z => `Vql_Fragment_${z}`)].join(', ')
+
+      return null
+    })
+    .filter(x => x)
     .join(', ')
 
   const imp = `import { ${fragments} } from '${FragmentModule.id}'`
