@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  Clean up your Vue SFC Scripts by moving your graphql quieres to their own block
+  Clean up your Vue SFC Scripts by moving your graphql queries to their own block
 </p>
 
 <p align="center">
