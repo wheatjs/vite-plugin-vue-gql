@@ -1,8 +1,10 @@
+import { GraphQLSchema } from 'graphql'
 import { UserOptions } from '../shared/types'
 import { FragmentDefinition } from '../fragments/fragments'
 
 export interface AppCache {
   fragments: FragmentDefinition[]
+  schema?: GraphQLSchema
 }
 
 export interface AppConfig {

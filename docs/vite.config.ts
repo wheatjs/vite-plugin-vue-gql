@@ -29,7 +29,9 @@ export default defineConfig({
     }),
 
     Vql({
-      fragments: './src/fragments/**/*.gql'
+      fragments: './src/fragments/**/*.gql',
+      schema: 'https://media.slackoff.xyz/graphql/',
+      dts: 'src/schema.d.ts',
     }),
 
     // https://github.com/hannoeru/vite-plugin-pages

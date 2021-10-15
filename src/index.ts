@@ -3,6 +3,7 @@ import { FragmentModule } from './properties'
 import { defineModules, useVueRequest, applyTransforms, applyConfigs } from './util'
 import { blockModule } from './blocks'
 import { fragmentModule } from './fragments'
+import { componentsModule } from './components'
 import { generationModule } from './generation'
 import { config, cache } from './shared'
 import { UserOptions } from './shared/types'
@@ -12,6 +13,7 @@ const modules = defineModules([
   // generationModule,
   fragmentModule,
   blockModule,
+  componentsModule
 ])
 
 export default function VitePluginVueGQL(options?: UserOptions): Plugin {
