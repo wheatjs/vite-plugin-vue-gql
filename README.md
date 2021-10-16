@@ -31,15 +31,16 @@ npm i @urql/vue graphql
 ```ts
 // vite.config.ts
 
+import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Vql from 'vite-plugin-vue-gql'
 
-export default {
+export default defineConfig({
   plugins: [
     Vue(), 
-    Vql()
+    Vql(),
   ],
-}
+})
 ```
 
 If you are using typescript, make sure you include the following in your `tsconfig.json`
@@ -191,18 +192,18 @@ You can use fargments in your graphql queries, mutations, and subscriptions by s
 
 ```ts
 // vite.config.ts
-
+import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Vql from 'vite-plugin-vue-gql'
 
-export default {
+export default defineConfig({
   plugins: [
     Vue(), 
     Vql({
-      fragments: './src/fragments/**/*.gql'
-    })
+      fragments: './src/fragments/**/*.gql',
+    }),
   ],
-}
+})
 ```
 
 Here is a general idea of what your fragments should look like
@@ -241,6 +242,30 @@ query($name: String!) {
 }
 </gql>
 ```
+
+## Type Definitions
+You can automatically generate typescript type definition files from you graphql schema by providing a link to your server
+or a path to your graphql schema.
+
+```ts
+import { defineConfig } from 'vite'
+import Vue from '@vitejs/plugin-vue'
+import Vql from 'vite-plugin-vue-gql'
+
+export default defineConfig({
+  plugins: [
+    Vue(),
+    Vql({
+      schema: 'https://my-api.dev/graphql',
+      dts: 'src/schema.d.ts',
+    }),
+  ],
+})
+```
+
+Whenever the application is run, vite-plugin-vue-gql will download the schema from your server or open the provided gql schema and generate a typescript
+type definition file for your schema via [GraphQL Code Generator](https://www.graphql-code-generator.com/)
+
 
 ## Roadmap
 - [x] Add support for fragments
