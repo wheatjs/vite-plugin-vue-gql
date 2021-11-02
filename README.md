@@ -188,7 +188,7 @@ subscription MessageSub($from: String!) {
 ```
 
 ## Fragments
-You can use fargments in your graphql queries, mutations, and subscriptions by specifying your `.gql` files that contain your fragments in the config. 
+You can use fragments in your graphql queries, mutations, and subscriptions by specifying your `.gql` files that contain your fragments in the config. 
 
 ```ts
 // vite.config.ts
